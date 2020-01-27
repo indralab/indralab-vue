@@ -15,12 +15,15 @@
                      placeholder="Select measure"></multiselect>
       </div>
     </div>
-    <apexchart
-        type="line"
-        height=300
-        :options="chartOptions"
-        :series="series">
-    </apexchart>
+    <div v-for="measure in selected_measures"
+         :key="measure">
+      <h3>{{ measure }}</h3>
+      <apexchart type="line"
+                 height=300
+                 :options="chartOptions"
+                 :series="series[measure]">
+      </apexchart>
+    </div>
   </div>
 </template>
 
@@ -91,17 +94,14 @@
     },
     computed: {
       series: function() {
-        if (!this.amount_data || !this.selected_measures)
+        if (!this.amount_data)
           return [];
 
-        let ret = [];
-        let ret_name;
-        for (let measure of this.selected_measures) {
+        let ret = {};
+        for (let measure of this.measures) {
+          ret[measure] = [];
           for (let [name, measures] of Object.entries(this.amount_data[measure])) {
-            ret_name = name;
-            if (this.selected_measures.length > 1)
-              ret_name = ret_name + '-' + measure;
-            ret.push({name: ret_name, data: measures})
+            ret[measure].push({name: name, data: measures})
           }
         }
         return ret
@@ -114,7 +114,7 @@
 
 <style scoped>
   .form {
-    width: 20%;
+    width: 50em;
     margin: 0 auto;
   }
 </style>
