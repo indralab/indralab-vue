@@ -1,16 +1,31 @@
 <template>
   <div class="amount-view">
-    <select v-model="stage">
-      <option value="" selected disabled hidden>
-        Select a stage to view...
-      </option>
-      <option v-for="stage in options"
-              :value="stage"
-              :key="stage">
-        {{ stage }}
-      </option>
-    </select>
-    <button v-on:click="getDataFile">Load</button>
+    <div class="form">
+      <select v-model="stage">
+        <option value="" selected disabled hidden>
+          Select a stage to view...
+        </option>
+        <option v-for="stage in stages"
+                :value="stage"
+                :key="stage">
+          {{ stage }}
+        </option>
+      </select>
+      <button v-on:click="getStageData">Load</button>
+    </div>
+    <div class="form"
+         v-if="measures">
+      <select v-model="measure">
+        <option value="" selected disabled hidden>
+          Select a measure to view...
+        </option>
+        <option v-for="measure in measures"
+               :value="measure"
+               :key="measure">
+          {{ measure }}
+        </option>
+      </select>
+    </div>
     <apexchart
         type="line"
         height=300
@@ -30,9 +45,11 @@
     },
     data: function() {
       return {
-        options: [],
-        amount_data: null,
+        stages: [],
         stage: null,
+        measures: null,
+        measure: null,
+        amount_data: null,
         dates: null,
         chartOptions: {
           dataLabels: {
@@ -62,18 +79,20 @@
       }
     },
     methods: {
-      getDataFile: async function() {
-        const resp = await fetch(`http://localhost:5000/data/${this.stage}`, {method: 'GET'});
+      getStageData: async function() {
+        if (!this.stage)
+          return;
+        this.measure = null;
+        const resp = await fetch(
+          `http://localhost:5000/data/${this.stage}`,
+          {method: 'GET'}
+          );
         this.amount_data = await resp.json();
-        let cats = new Set();
-        for (let measures of Object.values(this.amount_data.total)) {
-          Object.keys(measures).forEach(date => cats.add(date));
-        }
-        this.dates = Array.from(cats);
+        this.measures = Object.keys(this.amount_data);
       },
       getStageOptions: async function() {
         const resp = await fetch('http://localhost:5000/listdata', {method: 'GET'});
-        this.options = await resp.json()
+        this.stages = await resp.json()
       }
     },
     created: function() {
@@ -81,18 +100,12 @@
     },
     computed: {
       series: function() {
-        if (!this.amount_data)
+        if (!this.amount_data || !this.measure)
           return [];
 
         let ret = [];
-        let data;
-        for (let [name, measures] of Object.entries(this.amount_data.total)) {
-          data = [];
-          this.dates.forEach(date => {
-            if (measures[date] !== undefined)
-              data.push([Number.parseInt(date), measures[date]]);
-          });
-          ret.push({name: name, data: data});
+        for (let [name, measures] of Object.entries(this.amount_data[this.measure])) {
+          ret.push({name: name, data: measures})
         }
         return ret
       }
