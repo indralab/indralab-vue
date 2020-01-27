@@ -67,8 +67,8 @@
       processValues: function() {
         let date, date_str;
         let ret = {};
-        let start = Math.max(this.day - 1, 0);
-        let stop = Math.min(this.day + 2, this.date_data.length - 1);
+        let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 2);
+        let stop = Math.max(Math.min(this.day + 2, this.date_data.length - 1), 1);
         for (let day_obj of this.date_data.slice(start, stop) ) {
           for (let [stage_name, stage_data] of Object.entries(day_obj['times'])) {
             for (let [flavor_name, times] of Object.entries(stage_data)) {
