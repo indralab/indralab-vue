@@ -3,16 +3,19 @@
     <button v-on:click="changeDay(-1)">Previous</button>
     <button v-on:click="changeDay(1)">Next</button>
     <TimeView :day="day"></TimeView>
+    <AmountView :day="day"></AmountView>
   </div>
 </template>
 
 <script>
 import TimeView from './components/TimeView.vue'
+import AmountView from './components/AmountView.vue'
 
 export default {
   name: 'app',
   components: {
-    TimeView
+    TimeView,
+    AmountView
   },
   data: function(){
     return {
