@@ -1,7 +1,5 @@
 <template>
   <div class="time-view">
-    <button v-on:click="getDates">Load Dates</button>
-    <button v-on:click="processValues">Process</button>
     <apexchart
         type="rangeBar"
         height=300
@@ -24,7 +22,6 @@
     data: function() {
       return {
         date_data: [],
-        series: [],
         chartOptions: {
           chart: {
             height: 450,
@@ -53,7 +50,12 @@
         const resp = await fetch(`http://localhost:5000/data/runtimes`, {method: 'GET'});
         this.date_data = await resp.json();
       },
-      processValues: function() {
+    },
+    created: function() {
+      this.getDates();
+    },
+    computed: {
+      series: function() {
         let final_stage_name;
         let ret = {};
         let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 1);
@@ -81,7 +83,7 @@
             }
           }
         }
-        this.series = Object.values(ret);
+        return Object.values(ret);
       }
     }
   }
