@@ -65,26 +65,28 @@
         this.date_data = await resp.json();
       },
       processValues: function() {
-        let date, date_str;
+        let date, date_str, final_stage_name;
         let ret = {};
         let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 2);
         let stop = Math.max(Math.min(this.day + 2, this.date_data.length - 1), 1);
         for (let day_obj of this.date_data.slice(start, stop) ) {
           for (let [stage_name, stage_data] of Object.entries(day_obj['times'])) {
             for (let [flavor_name, times] of Object.entries(stage_data)) {
-              if (stage_data.length > 1)
+              if (Object.keys(stage_data).length > 1)
                 if (flavor_name === 'all')
                   continue;
                 else
-                  stage_name = stage_name  + '-' + flavor_name;
+                  final_stage_name = stage_name  + '-' + flavor_name;
+              else
+                final_stage_name = stage_name;
 
-              if ( !(stage_name in ret) )
-                ret[stage_name] = {name: stage_name, data: []};
+              if ( !(final_stage_name in ret) )
+                ret[final_stage_name] = {name: final_stage_name, data: []};
 
               for (let timespan of times) {
                 date = new Date(day_obj['day']);
                 date_str = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
-                ret[stage_name].data.push({x: date_str, y: timespan})
+                ret[final_stage_name].data.push({x: date_str, y: timespan})
               }
             }
           }
