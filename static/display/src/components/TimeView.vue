@@ -41,19 +41,6 @@
             min: 0,
             max: 28
           },
-          fill: {
-            type: 'gradient',
-            gradient: {
-              shade: 'light',
-              type: 'vertical',
-              shadeIntensity: 0.25,
-              gradientToColors: undefined,
-              inverseColors: true,
-              opacityFrom: 1,
-              opacityTo: 1,
-              stops: [50, 0, 100, 100]
-            }
-          },
           legend: {
             position: 'top',
             horizontalAlign: 'left'
