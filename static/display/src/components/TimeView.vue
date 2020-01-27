@@ -83,7 +83,7 @@
 
               for (let timespan of times) {
                 date = new Date(day_obj['day']);
-                date_str = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
+                date_str = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
                 ret[stage_name].data.push({x: date_str, y: timespan})
               }
             }
