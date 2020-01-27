@@ -5,8 +5,8 @@
         <multiselect v-model="stage"
                      :searchable="true"
                      :options="stages"
+                     @input="getStageData"
                      placeholder="Select a stage"></multiselect>
-        <button v-on:click="getStageData">Load</button>
       </div>
       <div v-if="measures">
         <multiselect v-model="selected_measures"
