@@ -56,7 +56,7 @@
               align: 'left'
             },
             xaxis: {
-              type: 'numeric',
+              type: 'categories',
             },
           },
       }
@@ -65,7 +65,12 @@
       getDataFile: async function() {
         const resp = await fetch(`http://localhost:5000/data/${this.stage}`, {method: 'GET'});
         this.amount_data = await resp.json();
-        // let cats = new Set();
+        let cats = new Set();
+        for (let measures of Object.values(this.amount_data.total)) {
+          Object.keys(measures).forEach(date => cats.add(date));
+        }
+        this.chartOptions.xaxis.categories = Array.from(cats);
+        this.chartOptions.labels = this.chartOptions.xaxis.categories;
 
       },
       getStageOptions: async function() {
@@ -82,8 +87,16 @@
           return [];
 
         let ret = [];
+        let data;
         for (let [name, measures] of Object.entries(this.amount_data.total)) {
-          ret.push({name: name, data: Object.values(measures)});
+          data = [];
+          this.chartOptions.xaxis.categories.forEach(date => {
+            if (measures[date] === undefined)
+              data.push(null);
+            else
+              data.push(measures[date]);
+          });
+          ret.push({name: name, data: data});
         }
         return ret
       }
