@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <
     <TimeView :day="0"></TimeView>
   </div>
 </template>
