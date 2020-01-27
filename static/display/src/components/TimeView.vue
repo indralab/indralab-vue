@@ -38,6 +38,8 @@
           },
           xaxis: {
             type: 'datetime',
+            min: 0,
+            max: 28
           },
           fill: {
             type: 'gradient',
@@ -65,10 +67,10 @@
         this.date_data = await resp.json();
       },
       processValues: function() {
-        let date, date_str, final_stage_name;
+        let final_stage_name;
         let ret = {};
-        let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 2);
-        let stop = Math.max(Math.min(this.day + 2, this.date_data.length - 1), 1);
+        let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 1);
+        let stop = Math.max(Math.min(this.day + 2, this.date_data.length), 1);
         for (let day_obj of this.date_data.slice(start, stop) ) {
           for (let [stage_name, stage_data] of Object.entries(day_obj['times'])) {
             for (let [flavor_name, times] of Object.entries(stage_data)) {
@@ -84,9 +86,10 @@
                 ret[final_stage_name] = {name: final_stage_name, data: []};
 
               for (let timespan of times) {
-                date = new Date(day_obj['day']);
-                date_str = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
-                ret[final_stage_name].data.push({x: date_str, y: timespan})
+                ret[final_stage_name].data.push({
+                  x: day_obj['day_str'],
+                  y: timespan
+                })
               }
             }
           }

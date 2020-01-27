@@ -33,32 +33,32 @@
         options: [],
         amount_data: null,
         stage: null,
+        dates: null,
         chartOptions: {
-            chart: {
-              height: 350,
-              type: 'line',
-              id: 'areachart-2'
-            },
-            dataLabels: {
-              enabled: false
-            },
-            stroke: {
-              curve: 'straight'
-            },
-            grid: {
-              padding: {
-                right: 30,
-                left: 20
-              }
-            },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'straight',
+          },
+          grid: {
+            padding: {
+              right: 30,
+              left: 20
+            }
+          },
+          xaxis: {
+            type: 'datetime',
             title: {
-              text: 'Line with Annotations',
-              align: 'left'
-            },
-            xaxis: {
-              type: 'categories',
+              text: 'Day',
             },
           },
+          yaxis: {
+            title: {
+              text: 'Count'
+            }
+          }
+        },
       }
     },
     methods: {
@@ -69,9 +69,7 @@
         for (let measures of Object.values(this.amount_data.total)) {
           Object.keys(measures).forEach(date => cats.add(date));
         }
-        this.chartOptions.xaxis.categories = Array.from(cats);
-        this.chartOptions.labels = this.chartOptions.xaxis.categories;
-
+        this.dates = Array.from(cats);
       },
       getStageOptions: async function() {
         const resp = await fetch('http://localhost:5000/listdata', {method: 'GET'});
@@ -90,11 +88,9 @@
         let data;
         for (let [name, measures] of Object.entries(this.amount_data.total)) {
           data = [];
-          this.chartOptions.xaxis.categories.forEach(date => {
-            if (measures[date] === undefined)
-              data.push(null);
-            else
-              data.push(measures[date]);
+          this.dates.forEach(date => {
+            if (measures[date] !== undefined)
+              data.push([Number.parseInt(date), measures[date]]);
           });
           ret.push({name: name, data: data});
         }
