@@ -1,30 +1,19 @@
 <template>
   <div class="amount-view">
     <div class="form">
-      <select v-model="stage">
-        <option value="" selected disabled hidden>
-          Select a stage to view...
-        </option>
-        <option v-for="stage in stages"
-                :value="stage"
-                :key="stage">
-          {{ stage }}
-        </option>
-      </select>
-      <button v-on:click="getStageData">Load</button>
-    </div>
-    <div class="form"
-         v-if="measures">
-      <select v-model="measure">
-        <option value="" selected disabled hidden>
-          Select a measure to view...
-        </option>
-        <option v-for="measure in measures"
-               :value="measure"
-               :key="measure">
-          {{ measure }}
-        </option>
-      </select>
+      <div>
+        <multiselect v-model="stage"
+                     :searchable="true"
+                     :options="stages"
+                     placeholder="Select a stage"></multiselect>
+        <button v-on:click="getStageData">Load</button>
+      </div>
+      <div v-if="measures">
+        <multiselect v-model="selected_measures"
+                     :options="measures"
+                     :multiple="true"
+                     placeholder="Select measure"></multiselect>
+      </div>
     </div>
     <apexchart
         type="line"
@@ -37,18 +26,20 @@
 
 <script>
   import VueApexCharts from 'vue-apexcharts'
+  import Multiselect from 'vue-multiselect'
 
   export default {
     name: "AmountView",
     components: {
       apexchart: VueApexCharts,
+      multiselect: Multiselect,
     },
     data: function() {
       return {
         stages: [],
         stage: null,
         measures: null,
-        measure: null,
+        selected_measures: [],
         amount_data: null,
         dates: null,
         chartOptions: {
@@ -82,7 +73,7 @@
       getStageData: async function() {
         if (!this.stage)
           return;
-        this.measure = null;
+        this.selected_measures = null;
         const resp = await fetch(
           `http://localhost:5000/data/${this.stage}`,
           {method: 'GET'}
@@ -100,12 +91,18 @@
     },
     computed: {
       series: function() {
-        if (!this.amount_data || !this.measure)
+        if (!this.amount_data || !this.selected_measures)
           return [];
 
         let ret = [];
-        for (let [name, measures] of Object.entries(this.amount_data[this.measure])) {
-          ret.push({name: name, data: measures})
+        let ret_name;
+        for (let measure of this.selected_measures) {
+          for (let [name, measures] of Object.entries(this.amount_data[measure])) {
+            ret_name = name;
+            if (this.selected_measures.length > 1)
+              ret_name = ret_name + '-' + measure;
+            ret.push({name: ret_name, data: measures})
+          }
         }
         return ret
       }
@@ -113,6 +110,11 @@
   }
 </script>
 
-<style scoped>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
+<style scoped>
+  .form {
+    width: 20%;
+    margin: 0 auto;
+  }
 </style>
