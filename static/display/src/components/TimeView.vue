@@ -4,7 +4,7 @@
     <button v-on:click="processValues">Process</button>
     <apexchart
         type="rangeBar"
-        height=800
+        height=300
         :options="chartOptions"
         :series="series">
     </apexchart>

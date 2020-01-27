@@ -13,7 +13,7 @@
     <button v-on:click="getDataFile">Load</button>
     <apexchart
         type="line"
-        height=800
+        height=300
         :options="chartOptions"
         :series="series">
     </apexchart>
