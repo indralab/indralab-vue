@@ -104,6 +104,17 @@
         // Process the data.
         this.amount_data = await resp.json();
         this.measures = Object.keys(this.amount_data);
+
+        // Figure out what dates are included in this file.
+        let date_set = new Set();
+        Object.values(this.amount_data).forEach(measure_data => {
+          Object.values(measure_data).forEach(source_data => {
+            Object.values(source_data).forEach(pair => {
+              date_set.add(pair[0]);
+            })
+          })
+        });
+        this.dates = Array.from(date_set);
       },
       getStageOptions: async function() {
         /**
@@ -126,7 +137,7 @@
         /**
          * Compute the data series options.
          *
-         * The data generated is based on the `measures` and `amount_data`
+         * The data generated is based on the `amount_data` and `dates`
          * attributes.
          *
          * @return {Object} containing the line-plot data for each measure.
@@ -138,10 +149,24 @@
 
         // Build up the return Object.
         let ret = {};
-        for (let measure of this.measures) {
+        let these_dates, these_data;
+        for (let [measure, measure_data] of Object.entries(this.amount_data)) {
           ret[measure] = [];
-          for (let [name, measures] of Object.entries(this.amount_data[measure])) {
-            ret[measure].push({name: name, data: measures})
+          for (let [name, measures] of Object.entries(measure_data)) {
+            // Get the data that exists within the measurements.
+            these_dates = new Set();
+            these_data = [];
+            measures.forEach(pair => {
+              these_dates.add(pair[0]);
+              these_data.push(pair);
+            });
+
+            // Fill in the rest with nulls.
+            this.dates.forEach(date => {
+              if (!these_dates.has(date))
+                these_data.push([date, null])
+            });
+            ret[measure].push({name: name, data: these_data});
           }
         }
         return ret
