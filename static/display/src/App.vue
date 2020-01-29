@@ -1,7 +1,5 @@
 <template>
   <div id="app">
-    <button v-on:click="changeDay(-1)">Previous</button>
-    <button v-on:click="changeDay(1)">Next</button>
     <TimeView :day="day"></TimeView>
     <AmountView :day="day"></AmountView>
   </div>
@@ -23,9 +21,6 @@ export default {
     }
   },
   methods: {
-    changeDay: function(delta) {
-      this.day = this.day + delta;
-    }
   }
 }
 </script>

@@ -1,5 +1,7 @@
 <template>
   <div class="time-view">
+    <button v-on:click="changeDay(-1)">Previous</button>
+    <button v-on:click="changeDay(1)">Next</button>
     <apexchart
         type="rangeBar"
         height=300
@@ -16,11 +18,9 @@
     components: {
       apexchart: VueApexCharts
     },
-    props: {
-      day: Number
-    },
     data: function() {
       return {
+        day: 0,
         date_data: [],
         chartOptions: {
           chart: {
@@ -55,6 +55,10 @@
           {method: 'GET'}
           );
         this.date_data = await resp.json();
+      },
+
+      changeDay: function(delta) {
+        this.day = this.day + delta;
       },
     },
     created: function() {
