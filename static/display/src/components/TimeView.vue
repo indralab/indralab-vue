@@ -20,7 +20,7 @@
     },
     data: function() {
       return {
-        day: 0,
+        lo: 0,
         date_data: [],
         chartOptions: {
           chart: {
@@ -58,13 +58,25 @@
       },
 
       changeDay: function(delta) {
-        this.day = this.day + delta;
+        if (!this.date_data.length)
+          return;
+
+        if ((delta > 0 && this.hi + delta < this.date_data.length)
+            || (delta < 0 && this.lo + delta > 0))
+          this.lo += delta;
       },
     },
     created: function() {
       this.getDates();
     },
     computed: {
+      hi: function() {
+        if (!this.date_data.length)
+          return this.lo;
+
+        return Math.min(this.lo + 3, this.date_data.length);
+      },
+
       series: function() {
         /**
          * Generate the series data.
@@ -75,16 +87,15 @@
          *
          * @return {Array} of objects with data for each stage.
          */
+        if (!this.date_data.length)
+          return [];
+
         // Declare a variable for the loop.
         let final_stage_name;
 
-        // Calculate the start and stop times.
-        let start = Math.min(Math.max(this.day - 1, 0), this.date_data.length - 1);
-        let stop = Math.max(Math.min(this.day + 2, this.date_data.length), 1);
-
         // Build up a dictionary keyed by stage names.
         let ret = {};
-        for (let day_obj of this.date_data.slice(start, stop) ) {
+        for (let day_obj of this.date_data.slice(this.lo, this.hi) ) {
           for (let [stage_name, stage_data] of Object.entries(day_obj['times'])) {
             for (let [flavor_name, times] of Object.entries(stage_data)) {
 
