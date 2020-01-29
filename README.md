@@ -1,4 +1,4 @@
-# display
+# IndraLab Vue Tools
 
 ## Project setup
 ```
