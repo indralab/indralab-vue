@@ -1,6 +1,24 @@
-INDRA Database Vue Data Display
--------------------------------
+# display
 
-This repo was created to prototype creating a fully-fledged Vue.js app, built
-using the vue-cli but still served by Python flask.
+## Project setup
+```
+npm install
+```
 
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
