@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import TimeView from './components/TimeView.vue'
-import AmountView from './components/AmountView.vue'
+import TimeView from './components/TimeView'
+import AmountView from './components/AmountView'
 
 export default {
   name: 'app',
