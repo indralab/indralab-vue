@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <TimeView :day="day"></TimeView>
-    <AmountView :day="day"></AmountView>
+    <TimeView></TimeView>
+    <AmountView></AmountView>
   </div>
 </template>
 
@@ -15,13 +15,6 @@ export default {
     TimeView,
     AmountView
   },
-  data: function(){
-    return {
-      day: 0
-    }
-  },
-  methods: {
-  }
 }
 </script>
 
