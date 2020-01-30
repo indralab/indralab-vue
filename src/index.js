@@ -1,6 +1,8 @@
 import * as dispComponents from './components'
 
 const install = (Vue) => {
+  Vue.prototype.$curation_url = "";
+  Vue.prototype.$curation_list_url = "";
   Object.values(dispComponents).forEach(dispComponent => {
     Vue.use(dispComponent);
   })

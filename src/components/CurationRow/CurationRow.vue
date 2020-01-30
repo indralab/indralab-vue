@@ -145,7 +145,7 @@
                 source_hash: this.source_hash,
                 stmt_hash: this.stmt_hash
             };
-            const resp = await fetch(CURATION_ADDR, {
+            const resp = await fetch(this.$curation_url, {
                     method: 'POST',
                     body: JSON.stringify(cur_dict),
                     headers: {'Content-Type': 'application/json'}
@@ -179,7 +179,7 @@
         },
 
         getCurations: async function() {
-            const resp = await fetch(`${CURATION_LIST_ADDR}/${this.stmt_hash}/${this.source_hash}`, {
+            const resp = await fetch(`${this.$curation_list_url}/${this.stmt_hash}/${this.source_hash}`, {
                     method: 'GET',
                  });
             this.console.log('Response Status: ' + resp.status);
