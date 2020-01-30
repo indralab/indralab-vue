@@ -1,7 +1,12 @@
 {
-  "name": "display",
-  "version": "0.1.0",
-  "private": true,
+  "name": "indralab-vue",
+  "version": "0.1.1",
+  "private": false,
+  "author": "Patrick Greene <patrick.anton.greene@gmail.com>",
+  "repository": "indralab/indralab-vue",
+  "main": "dist/IndralabVue.common.js",
+  "unpkg": "dist/IndralabVue.umd.min.js",
+  "jsdelivr": "dist/IndralabVue.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name IndralabVue src/index.js",
