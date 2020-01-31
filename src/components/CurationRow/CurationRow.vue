@@ -129,7 +129,6 @@
         },
 
         loadPrevious: function() {
-            console.log("Loading previous curations.");
             this.getCurations();
         },
 

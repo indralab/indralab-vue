@@ -97,7 +97,7 @@
 
         // Get the data from the backend service.
         const resp = await fetch(
-          `http://localhost:5000/data/${this.stage}`,
+          this.$amount_view_url + this.stage,
           {method: 'GET'}
           );
 

@@ -50,10 +50,7 @@
         /**
          * Get the runtime data from the backend.
          */
-        const resp = await fetch(
-          `http://localhost:5000/data/runtimes`,
-          {method: 'GET'}
-          );
+        const resp = await fetch(this.$time_view_url, {method: 'GET'});
         this.date_data = await resp.json();
       },
 
