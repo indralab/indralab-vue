@@ -1,8 +1,6 @@
 import * as dispComponents from './components'
 
 const install = (Vue) => {
-  Vue.prototype.$curation_url = "";
-  Vue.prototype.$curation_list_url = "";
   Object.values(dispComponents).forEach(dispComponent => {
     Vue.use(dispComponent);
   })
@@ -16,3 +14,7 @@ export default install
 
 export {default as TimeView} from './components/TimeView'
 export {default as AmountView} from './components/AmountView'
+export {default as Statement} from './components/Statement'
+export {default as Evidence} from './components/Evidence'
+export {default as RefLink} from './components/RefLink'
+export {default as CurationRow} from './components/CurationRow'
