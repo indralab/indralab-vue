@@ -1,19 +1,18 @@
-import * as dispComponents from './components'
+import * as ilComponents from './components'
 
 const install = (Vue) => {
-  Object.values(dispComponents).forEach(dispComponent => {
-    Vue.use(dispComponent);
+  Object.values(ilComponents).forEach(comp => {
+    window.console.log("Indralab Vue Installing " + ilComponents.name);
+    Vue.use(comp);
   })
 };
 
-if (typeof window != 'undefined' && window.Vue) {
+if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
 
 export default install
 
-export {default as TimeView} from './components/TimeView'
-export {default as AmountView} from './components/AmountView'
 export {default as Statement} from './components/Statement'
 export {default as Evidence} from './components/Evidence'
 export {default as RefLink} from './components/RefLink'
