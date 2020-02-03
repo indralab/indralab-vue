@@ -123,7 +123,7 @@
          * This function populates the `stages` attribute.
          */
         const resp = await fetch(
-          'http://localhost:5000/listdata',
+          this.$amount_view_url + 'liststages',
           {method: 'GET'}
           );
         this.stages = await resp.json()
@@ -175,9 +175,11 @@
   }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+<!-- <style src="vue-multiselect/dist/vue-multiselect.min.css"></style> -->
 
 <style scoped>
+  @import "~vue-multiselect/dist/vue-multiselect.min.css";
+
   .form {
     width: 50em;
     margin: 0 auto;
