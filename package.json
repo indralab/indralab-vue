@@ -10,7 +10,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name IndralabVue src/index.js",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "watch": "npm run build -- --watch",
+    "test": "npm run watch -- --mode development"
   },
   "dependencies": {
     "apexcharts": "^3.15.2",

@@ -1,6 +1,6 @@
-import dispComponent from './Evidence'
+import ilComponent from './Evidence'
 
 export default Vue => {
-    Vue.component(dispComponent.name, dispComponent);
+    Vue.component(ilComponent.name, ilComponent);
 }
 

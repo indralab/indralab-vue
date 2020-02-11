@@ -30,13 +30,8 @@
 </template>
 
 <script>
-  import RefLink from '../RefLink'
-
   export default {
     name: "Evidence",
-    components: {
-      RefLink
-    },
     props: {
         text: String,
         pmid: String,
@@ -56,7 +51,6 @@
             this.curation_shown = !this.curation_shown
         }
     }
-
   }
 </script>
 

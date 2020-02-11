@@ -104,9 +104,9 @@
 
         // Generate the ref data.
         const ref_links = [];
-        for (let [ref_type, ref_id] of Object.entries(this.text)) {
+        for (let [ref_type, ref_id] of Object.entries(this.text_refs)) {
           ref_links.push({
-            url: this.getHrefUrl(ref_id, ref_type),
+            link: this.getHrefUrl(ref_id, ref_type),
             label: ((ref_type === best_ref_type) ? ref_id : ref_type),
             type: ref_type,
             id: ref_id

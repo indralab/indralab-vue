@@ -1,9 +1,9 @@
 import * as ilComponents from './components'
 
-const install = (Vue) => {
+const install = (vue) => {
   Object.values(ilComponents).forEach(comp => {
-    window.console.log("Indralab Vue Installing " + ilComponents.name);
-    Vue.use(comp);
+    window.console.log("Indralab Vue Installing " + comp.name);
+    vue.use(comp);
   })
 };
 
@@ -17,3 +17,4 @@ export {default as Statement} from './components/Statement'
 export {default as Evidence} from './components/Evidence'
 export {default as RefLink} from './components/RefLink'
 export {default as CurationRow} from './components/CurationRow'
+export {default as AgentSelect} from './components/AgentSelect'
