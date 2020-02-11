@@ -22,7 +22,10 @@
         <input v-model='stmt_type'>
 
         <h3>Search</h3>
-        <button @click='search' :disabled="searching">Search</button>
+        <button @click='searchButton'
+                :disabled="searching">
+          Search
+        </button>
         <button v-show="relations !== null && !empty_relations"
                 @click="show_search=false">
           Hide Search
@@ -65,8 +68,10 @@
           'none',
         ],
         relations: null,
+        relation_ids: null,
         show_search: true,
         searching: false,
+        next_offset: 0
       }
     },
     methods: {
@@ -84,10 +89,23 @@
         this.agents = new_agents;
       },
 
+      searchButton: async function() {
+        this.next_offset = 0;
+        this.relations = null;
+        this.relation_ids = null;
+        return await this.search()
+      },
+
       search: async function() {
         // Don't run multiple searches at once.
         if (this.searching)
-          return;
+          return false;
+
+        // If the database says there is nothing more to find, stop looking.
+        if (this.next_offset == null) {
+          window.console.log("Offset is null, ignoring search.");
+          return false;
+        }
 
         this.searching = true;
         let query_str = '';
@@ -123,23 +141,38 @@
         }
 
         // Make the query
-        let url = `${this.$search_url}?limit=50&offset=${this.offset}&${query_str}`;
+        let url = `${this.$search_url}?limit=50&offset=${this.next_offset}&${query_str}`;
         window.console.log(url);
         const resp = await fetch(url);
-        const new_relations = await resp.json();
-        if (this.relations == null)
+        const resp_json = await resp.json();
+        window.console.log(resp_json);
+
+        // Update the container values
+        if (this.relations == null) {
           this.relations = [];
-        new_relations.forEach(rel => this.relations.push(rel));
+          this.relation_ids = [];
+        }
+        resp_json.relations.forEach(rel => {
+          if (!(rel.id in this.relation_ids)) {
+            this.relation_ids.push(rel.id);
+            rel.hashes = undefined;  // take up less space.
+            this.relations.push(rel);
+          } else {
+            window.console.warn(`Relation id '${rel.id}' already exists.`);
+          }
+        });
+        this.next_offset = resp_json.next_offset;
 
         // Decide whether to close the search box or not.
         if (this.relations.length > 0)
           this.show_search = false;
 
         this.searching = false;
+        return true;
       },
 
       getMore: async function() {
-        await this.search()
+        return await this.search()
       }
     },
     computed: {
@@ -154,12 +187,6 @@
       base_list: function() {
         return this.relations;
       },
-
-      offset: function() {
-        if (this.relations == null)
-          return 0;
-        return this.relations.length;
-      }
     },
     created: function() {
       this.addAgent();

@@ -14,7 +14,7 @@ const piecemeal_mixin = {
         return {
             end_n: 0,
             dn: 10,
-            bottom: false
+            bottom: false,
         }
     },
     created: function() {
@@ -48,29 +48,40 @@ const piecemeal_mixin = {
         loadMore: async function() {
             // If the list is currently not defined, just return.
             if (this.base_list == null)
-                return;
+                return 0;
+
+            let num_loaded = 0;
 
             // If the list is fully loaded, there is nothing to do.
             if (this.end_n >= this.base_list.length) {
                 if (this.getMore) {
                     window.console.log("Getting more...");
-                    await this.getMore();
-                    this.loadMore();
+                    let got_more = await this.getMore();
+                    if (!got_more) {
+                        window.console.log("None gotten");
+                        return;
+                    } else {
+                        window.console.log("More gotten.");
+                    }
+                } else {
+                    return;
                 }
-                return;
             }
 
             // Lengthen the list.
             this.end_n += this.dn;
+            num_loaded += this.dn;
 
             // If we're autoloading, check to see if we need to fill
             // in the page some more.
             if (this.autoload) {
                 await sleep(100);
                 if (this.bottomVisible()) {
-                    this.loadMore();
+                    num_loaded += await this.loadMore();
                 }
             }
+
+            return num_loaded;
         },
 
         loadAll: function() {
