@@ -29,8 +29,24 @@
     <div id='result-box' v-show='relations !== null'>
       <h3>Results</h3>
       <h2 v-show='empty_relations'>Nothing found.</h2>
-      <div v-for='rel in relations' :key='rel.id'>
-        <h2>{{ rel.english }}</h2>
+      <div class='row' v-for='rel in relations' :key='rel.id'>
+        <div class='col text-left'>
+          <h4 v-html="rel.english"></h4>
+        </div>
+        <div class="col text-right">
+          <span v-for="(src_group, cat, idx) in sources" :key="cat">
+            <span v-if="idx > 0" class="badge badge-source">|</span>
+            <span v-for="src in src_group"
+                  :key="src">
+              <span class='badge badge-source'
+                    v-if="src in rel.source_counts"
+                    :title="src"
+                    :class="srcBadge(src)">
+                {{ rel.source_counts[src] }}
+              </span>
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -109,7 +125,11 @@
         // Decide whether to close the search box or not.
         if (this.relations.length > 0)
           this.show_search = false;
-      }
+      },
+
+      srcBadge: function(src) {
+        return `source-${src}`
+      },
     },
     computed: {
       empty_relations: function() {
@@ -118,6 +138,10 @@
         if (this.relations.length === 0)
           return true;
         return false
+      },
+
+      sources: function() {
+        return this.$sources;
       }
     },
     created: function() {
