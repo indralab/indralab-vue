@@ -46,6 +46,10 @@ const piecemeal_mixin = {
     },
     methods: {
         loadMore: async function() {
+            // If the list is currently not defined, just return.
+            if (this.base_list == null)
+                return;
+
             // If the list is fully loaded, there is nothing to do.
             if (this.end_n >= this.base_list.length) {
                 return;
