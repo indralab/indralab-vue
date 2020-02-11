@@ -1,6 +1,8 @@
 <template>
-  <div class='stmt_search'>
-    <div id='seach-box' v-show='show_search'>
+  <div class='relation-search'>
+    <div id='seach-box'
+         :style="`cursor: ${(searching) ? 'progress': 'auto'};`"
+         v-show='show_search'>
         <h3>Select Agents</h3>
         <div v-for="(agent, agent_idx) in agents"
              :key='agent_idx'>
@@ -20,7 +22,7 @@
         <input v-model='stmt_type'>
 
         <h3>Search</h3>
-        <button @click='search'>Search</button>
+        <button @click='search' :disabled="searching">Search</button>
         <button v-show="relations !== null && !empty_relations"
                 @click="show_search=false">
           Hide Search
@@ -63,7 +65,8 @@
           'none',
         ],
         relations: null,
-        show_search: true
+        show_search: true,
+        searching: false,
       }
     },
     methods: {
@@ -82,6 +85,11 @@
       },
 
       search: async function() {
+        // Don't run multiple searches at once.
+        if (this.searching)
+          return;
+
+        this.searching = true;
         let query_str = '';
 
         // Format the agents into the query.
@@ -115,19 +123,28 @@
         }
 
         // Make the query
-        let url = `${this.$search_url}?limit=50&${query_str}`;
+        let url = `${this.$search_url}?limit=50&offset=${this.offset}&${query_str}`;
         window.console.log(url);
         const resp = await fetch(url);
-        this.relations = await resp.json();
+        const new_relations = await resp.json();
+        if (this.relations == null)
+          this.relations = [];
+        new_relations.forEach(rel => this.relations.push(rel));
 
         // Decide whether to close the search box or not.
         if (this.relations.length > 0)
           this.show_search = false;
+
+        this.searching = false;
       },
+
+      getMore: async function() {
+        await this.search()
+      }
     },
     computed: {
       empty_relations: function() {
-        if (this.relations === null)
+        if (this.relations == null)
           return false;
         if (this.relations.length === 0)
           return true;
@@ -136,6 +153,12 @@
 
       base_list: function() {
         return this.relations;
+      },
+
+      offset: function() {
+        if (this.relations == null)
+          return 0;
+        return this.relations.length;
       }
     },
     created: function() {
@@ -146,5 +169,7 @@
 </script>
 
 <style scoped>
-
+  .relation-search {
+    cursor: pointer
+  }
 </style>

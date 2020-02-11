@@ -52,6 +52,11 @@ const piecemeal_mixin = {
 
             // If the list is fully loaded, there is nothing to do.
             if (this.end_n >= this.base_list.length) {
+                if (this.getMore) {
+                    window.console.log("Getting more...");
+                    await this.getMore();
+                    this.loadMore();
+                }
                 return;
             }
 
