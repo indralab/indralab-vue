@@ -7,7 +7,7 @@
         <span v-show='options_empty'>No groundings found...</span>
       </span>
       <span v-else-if="options.length === 1">
-        <span class='frozen-box' v-html="printOption(option[0])"></span>
+        <span class='frozen-box' v-html="printOption(options[0])"></span>
         <button @click='resetOptions'>Cancel</button>
       </span>
       <span v-else>
