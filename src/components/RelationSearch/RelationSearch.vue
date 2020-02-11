@@ -35,7 +35,7 @@
       <h3>Results</h3>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
-      <span v-for="rel in relations" :key="rel.id">
+      <span v-for="rel in list_shown" :key="rel.id">
         <relation v-bind="rel"></relation>
       </span>
     </div>
@@ -43,8 +43,16 @@
 </template>
 
 <script>
+  import piecemeal_mixin from "../piecemeal_mixin";
+
   export default {
     name: "RelationSearch",
+    props: {
+      autoload: {
+        type: Boolean,
+        default: true
+      }
+    },
     data: function() {
       return {
         agents: [],
@@ -55,7 +63,7 @@
           'none',
         ],
         relations: null,
-        show_search: true,
+        show_search: true
       }
     },
     methods: {
@@ -107,7 +115,7 @@
         }
 
         // Make the query
-        let url = `${this.$search_url}?limit=10&${query_str}`;
+        let url = `${this.$search_url}?limit=50&${query_str}`;
         window.console.log(url);
         const resp = await fetch(url);
         this.relations = await resp.json();
@@ -125,10 +133,15 @@
           return true;
         return false
       },
+
+      base_list: function() {
+        return this.relations;
+      }
     },
     created: function() {
       this.addAgent();
-    }
+    },
+    mixins: [piecemeal_mixin]
   }
 </script>
 

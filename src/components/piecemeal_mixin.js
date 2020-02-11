@@ -22,11 +22,14 @@ const piecemeal_mixin = {
             this.end_n = 10;
             return;
         }
-        window.addEventListener('scroll', () => {
-            this.bottom = this.bottomVisible()
-        })
+        window.console.log("Adding event listener to scroll.");
+        window.addEventListener('scroll', this.updateBottom);
 
         this.loadMore();
+    },
+    destroyed: function() {
+        window.console.log("Removing event listener to scroll.");
+        window.removeEventListener('scroll', this.updateBottom)
     },
     computed: {
         list_shown: function() {
@@ -69,8 +72,12 @@ const piecemeal_mixin = {
             const scrollY = window.scrollY;
             const visible = document.documentElement.clientHeight;
             const pageHeight = document.documentElement.scrollHeight;
-            const bottomOfPage = visible + scrollY >= pageHeight;
+            const bottomOfPage = visible + scrollY + 5 >= pageHeight;
             return bottomOfPage || pageHeight < visible;
+        },
+
+        updateBottom: function() {
+            this.bottom = this.bottomVisible();
         }
     },
     watch: {
