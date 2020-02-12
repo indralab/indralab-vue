@@ -85,6 +85,7 @@
             query_strs.push(`${['subject', 'object'][idx]}=${ag}@NAME`);
         }
 
+        query_strs.push(`type=${this.type}`);
         query_strs.push("max_stmts=50");
         query_strs.push("ev_limit=10");
         query_strs.push(`offset=${this.next_offset}`);
