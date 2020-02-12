@@ -1,6 +1,7 @@
 <template>
   <span class="relation">
     <div class="row header"
+         :style="`cursor: ${(searching) ? 'progress': 'pointer'};`"
          @click="toggleStmts">
       <div class='col text-left'>
         <h4 v-html="english"></h4>
@@ -116,6 +117,6 @@
     cursor: pointer;
   }
   .header:hover {
-    background-color: #f0f0f0;
+    background-color: #e0e0e9;
   }
 </style>

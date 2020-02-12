@@ -1,6 +1,5 @@
 <template>
-  <div class="statement"
-       :style="">
+  <div class="statement">
     <div class="row">
       <div class="col">
         <h4 v-on:click='toggleList' class='clickable'>
@@ -69,5 +68,11 @@
 </script>
 
 <style scoped>
+  .clickable {
+    cursor: pointer;
+  }
+  .clickable:hover {
+    background-color: #e0e0e9;
+  }
 
 </style>
