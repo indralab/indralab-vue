@@ -1,7 +1,7 @@
 <template>
-  <div class='container evidence'>
+  <div class='container evidence nvm'>
     <hr>
-    <div class='row'>
+    <div class='row nvm'>
       <div class='col-1'>
         <div class='row'>
           <div class='col-3 nvp clickable text-center'
@@ -15,7 +15,7 @@
           </div>
         </div>
       </div>
-      <div class='col-10' v-html='text'></div>
+      <div class='col-10' v-html='always_text'></div>
       <div class='col-1 text-right'>
         <ref-link :text_refs="text_refs"></ref-link>
       </div>
@@ -50,6 +50,14 @@
         toggleCuration: function () {
             this.curation_shown = !this.curation_shown
         }
+    },
+    computed: {
+      always_text: function() {
+        if (this.text)
+          return this.text;
+        else
+          return '<i>No evidence text available.</i>'
+      }
     }
   }
 </script>
