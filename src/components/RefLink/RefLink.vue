@@ -1,19 +1,16 @@
 <template>
   <span class="ref-link">
-    <span v-for="ref in ref_links"
-          :key="ref.type">
-      <span v-if="ref.link">
-        <a :href="ref.link"
-           @mouseover="getLinkTitle(ref.type)"
-           :title="texts[ref.type]"
-           target="_blank">
-          {{ ref.label }}
-        </a>
-      </span>
-      <span v-else>
-        <span :title="ref.id">
-          {{ ref.label }}
-        </span>
+    <span v-if="best_ref.link">
+      <a :href="best_ref.link"
+         @mouseover="getLinkTitle(best_ref.type)"
+         :title="texts[best_ref.type]"
+         target="_blank">
+        {{ best_ref.label }}
+      </a>
+    </span>
+    <span v-else>
+      <span :title="best_ref.id">
+        {{ best_ref.label }}
       </span>
     </span>
   </span>
@@ -94,26 +91,23 @@
       }
     },
     computed: {
-      ref_links: function() {
+      best_ref: function() {
         // Choose the best ref type available
         const ref_type_order = ['PMID', 'PMCID', 'DOI', null];
         let best_ref_type = null;
+        let href;
         for (best_ref_type of ref_type_order)
-          if (best_ref_type in this.text_refs)
-            break;
-
-        // Generate the ref data.
-        const ref_links = [];
-        for (let [ref_type, ref_id] of Object.entries(this.text_refs)) {
-          ref_links.push({
-            link: this.getHrefUrl(ref_id, ref_type),
-            label: ((ref_type === best_ref_type) ? ref_id : ref_type),
-            type: ref_type,
-            id: ref_id
-          });
-        }
-
-        return ref_links;
+          if (best_ref_type in this.text_refs) {
+            href = this.getHrefUrl(this.text_refs[best_ref_type], best_ref_type);
+            if (href)
+              break;
+          }
+        return {
+            link: href,
+            label: this.text_refs[best_ref_type],
+            type: best_ref_type,
+            id: this.text_refs[best_ref_type]
+          }
       },
 
       texts: function() {
