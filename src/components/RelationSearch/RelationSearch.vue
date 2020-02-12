@@ -1,7 +1,7 @@
 <template>
-  <div class='relation-search'>
+  <div class='relation-search'
+       :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
     <div id='seach-box'
-         :style="`cursor: ${(searching) ? 'progress': 'auto'};`"
          v-show='show_search'>
         <h3>Select Agents</h3>
         <div v-for="(agent, agent_idx) in agents"
