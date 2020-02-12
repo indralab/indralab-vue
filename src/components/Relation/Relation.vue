@@ -23,7 +23,7 @@
     </div>
     <div class="row stmt_list" v-show="show_stmts">
       <div class="col">
-        <div class="container">
+        <div class="container nvm">
           <statement v-for="stmt in stmts"
                      :key="stmt.hash"
                      :english="stmt.english"

@@ -1,5 +1,5 @@
 <template>
-  <div class='relation-search'
+  <div class='relation-search nvm'
        :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
     <div id='seach-box'
          v-show='show_search'>
@@ -36,7 +36,7 @@
     </div>
     <hr>
 
-    <div id='result-box' v-show='relation_order !== null'>
+    <div id='result-box' class='nvm' v-show='relation_order !== null'>
       <h3>Results</h3>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
