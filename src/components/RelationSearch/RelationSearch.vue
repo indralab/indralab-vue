@@ -26,7 +26,7 @@
                 :disabled="searching">
           Search
         </button>
-        <button v-show="relations !== null && !empty_relations"
+        <button v-show="relation_order !== null && !empty_relations"
                 @click="show_search=false">
           Hide Search
         </button>
@@ -36,12 +36,12 @@
     </div>
     <hr>
 
-    <div id='result-box' v-show='relations !== null'>
+    <div id='result-box' v-show='relation_order !== null'>
       <h3>Results</h3>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
-      <span v-for="rel in list_shown" :key="rel.id">
-        <relation v-bind="rel"></relation>
+      <span v-for="rel_id in list_shown" :key="rel_id">
+        <relation v-bind="relation_lookup[rel_id]"></relation>
       </span>
     </div>
   </div>
@@ -67,8 +67,8 @@
           'object',
           'none',
         ],
-        relations: null,
-        relation_ids: null,
+        relation_order: null,
+        relation_lookup: null,
         show_search: true,
         searching: false,
         next_offset: 0
@@ -91,8 +91,8 @@
 
       searchButton: async function() {
         this.next_offset = 0;
-        this.relations = null;
-        this.relation_ids = null;
+        this.relation_order = null;
+        this.relation_lookup = null;
         return await this.search()
       },
 
@@ -148,23 +148,37 @@
         window.console.log(resp_json);
 
         // Update the container values
-        if (this.relations == null) {
-          this.relations = [];
-          this.relation_ids = [];
+        if (this.relation_order == null) {
+          this.relation_order = [];
+          this.relation_lookup = {};
         }
         resp_json.relations.forEach(rel => {
-          if (!(rel.id in this.relation_ids)) {
-            this.relation_ids.push(rel.id);
+          if (!(rel.id in this.relation_lookup)) {
+            // Add a new entry if this is new.
             rel.hashes = undefined;  // take up less space.
-            this.relations.push(rel);
+            this.relation_lookup[rel.id] = rel;
+            this.relation_order.push(rel.id);
           } else {
-            window.console.warn(`Relation id '${rel.id}' already exists.`);
+            // Otherwise update the source counts.
+            //   Note that you need to create a new source count dict and replace
+            //   the old one rather than update the old one in place so that Vue
+            //   detects the change and updates the display.
+            let cnt;
+            let new_src_counts = {};
+            let old_src_counts = this.relation_lookup[rel.id].source_counts;
+            for (let src_group of Object.values(this.$sources))
+              for (let src of src_group) {
+                cnt = (rel.source_counts[src] || 0) + (old_src_counts[src] || 0);
+                if (cnt > 0)
+                  new_src_counts[src] = cnt;
+              }
+            this.relation_lookup[rel.id].source_counts = new_src_counts;
           }
         });
         this.next_offset = resp_json.next_offset;
 
         // Decide whether to close the search box or not.
-        if (this.relations.length > 0)
+        if (this.relation_order.length > 0)
           this.show_search = false;
 
         this.searching = false;
@@ -177,15 +191,15 @@
     },
     computed: {
       empty_relations: function() {
-        if (this.relations == null)
+        if (this.relation_order == null)
           return false;
-        if (this.relations.length === 0)
+        if (this.relation_order.length === 0)
           return true;
         return false
       },
 
       base_list: function() {
-        return this.relations;
+        return this.relation_order;
       },
     },
     created: function() {

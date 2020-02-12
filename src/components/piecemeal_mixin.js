@@ -107,7 +107,11 @@ const piecemeal_mixin = {
             }
         },
 
-        base_list: function() {
+        base_list: function(new_list, old_list) {
+            // If both lists are the same object, the list must not have been replaced.
+            if (old_list === new_list)
+                return;
+
             if (this.autoload)
                 this.end_n = 10;
             else
