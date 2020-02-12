@@ -24,10 +24,10 @@
     <div class="row stmt_list" v-show="show_stmts">
       <div class="col">
         <div class="container nvm">
-          <statement v-for="stmt in stmts"
-                     :key="stmt.hash"
+          <statement v-for="(stmt, hash) in stmts"
+                     :key="hash"
                      :english="stmt.english"
-                     :hash="stmt.hash"
+                     :hash="hash"
                      :evidence="stmt.evidence"></statement>
         </div>
       </div>
@@ -97,7 +97,7 @@
         const resp_json = await resp.json();
         window.console.log(resp_json);
 
-        this.stmts = Object.values(resp_json.statements);
+        this.stmts = resp_json.statements;
         this.next_offset = resp_json.offset;
 
         this.searching = false;
