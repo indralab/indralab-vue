@@ -1,8 +1,8 @@
 <template>
   <div class="statement">
-    <div class="row clickable">
+    <div class="row clickable" @click="toggleList">
       <div class="col text-left">
-        <h4 v-on:click='toggleList'>
+        <h4>
           <span v-html='english'></span>
           <small v-if="!sources"
                  class='badge badge-secondary badge-pill'>
