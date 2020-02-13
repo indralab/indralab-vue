@@ -6,7 +6,7 @@
       <div class='col text-left'>
         <h4 v-html="english"></h4>
       </div>
-      <div class="col text-right">
+      <div class="col-auto text-right">
         <source-display :source_counts="source_counts"></source-display>
       </div>
     </div>
@@ -17,6 +17,7 @@
                      :key="hash"
                      :english="stmt.english"
                      :hash="hash"
+                     :sources="stmt_source_counts[hash]"
                      :evidence="stmt.evidence"></statement>
         </div>
       </div>
@@ -45,6 +46,7 @@
       return {
         show_stmts: false,
         stmts: null,
+        stmt_source_counts: null,
         searching: false,
         next_offset: 0,
       }
@@ -83,7 +85,8 @@
         window.console.log(resp_json);
 
         this.stmts = resp_json.statements;
-        this.next_offset = resp_json.offset;
+        this.stmt_source_counts = resp_json.source_counts;
+        this.next_offset = resp_json.offset + resp_json.statements_returned;
 
         this.searching = false;
         return true;

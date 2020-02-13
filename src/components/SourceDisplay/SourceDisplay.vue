@@ -5,7 +5,7 @@
       <span v-for="src in src_group"
             :key="src">
         <span class='badge badge-source'
-              v-if="src in source_counts"
+              v-if="showSrc(src)"
               :title="src"
               :class="`source-${src}`">
           {{ source_counts[src] }}
@@ -19,10 +19,19 @@
   export default {
     name: "SourceDisplay",
     props: ['source_counts'],
+    methods: {
+      showSrc: function(src) {
+        if ( !(src in this.source_counts) )
+          return false;
+        else if ( this.source_counts[src] > 0 )
+          return true;
+        return false;
+      }
+    },
     computed: {
       sources: function() {
         return this.$sources
-      }
+      },
     }
   }
 </script>

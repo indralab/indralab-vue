@@ -1,10 +1,11 @@
 <template>
   <div class="statement">
-    <div class="row">
-      <div class="col">
-        <h4 v-on:click='toggleList' class='clickable'>
+    <div class="row clickable">
+      <div class="col text-left">
+        <h4 v-on:click='toggleList'>
           <span v-html='english'></span>
-          <small class='badge badge-secondary badge-pill'>
+          <small v-if="!sources"
+                 class='badge badge-secondary badge-pill'>
             {{ evidence.length }}
           </small>
           <small v-if='total_curations'
@@ -12,6 +13,9 @@
             &#9998; {{ total_curations }}
           </small>
         </h4>
+      </div>
+      <div class="col-auto text-right" v-if="sources">
+        <source-display :source_counts="sources"></source-display>
       </div>
     </div>
     <div class="row">
@@ -49,7 +53,8 @@
     props: {
       evidence: Array,
       english: String,
-      hash: String
+      hash: String,
+      sources: Object,
     },
     computed: {
       base_list: function() {
