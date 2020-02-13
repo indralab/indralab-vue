@@ -4,13 +4,13 @@
     <div class='row nvm'>
       <div class='col-1'>
         <div class='row'>
-          <div class='col-3 nvp clickable text-center'
+          <div class='col-3 nvm clickable text-center'
                :class="{ 'has-curation-badge': num_curations }"
                v-on:click='toggleCuration'
                :title='num_curations'>
             &#9998;
           </div>
-          <div class='col-9 nvp src-api'>
+          <div class='col-9 nvm src-api'>
             {{ source_api }}
           </div>
         </div>
@@ -63,5 +63,8 @@
 </script>
 
 <style scoped>
+  .src-api {
+    overflow-x: hidden;
+  }
 
 </style>
