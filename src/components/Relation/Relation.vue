@@ -7,18 +7,7 @@
         <h4 v-html="english"></h4>
       </div>
       <div class="col text-right">
-        <span v-for="(src_group, cat, idx) in sources" :key="cat">
-          <span v-if="idx > 0" class="badge badge-source">|</span>
-          <span v-for="src in src_group"
-                :key="src">
-            <span class='badge badge-source'
-                  v-if="src in source_counts"
-                  :title="src"
-                  :class="srcBadge(src)">
-              {{ source_counts[src] }}
-            </span>
-          </span>
-        </span>
+        <source-display :source_counts="source_counts"></source-display>
       </div>
     </div>
     <div class="row stmt_list" v-show="show_stmts">
@@ -61,10 +50,6 @@
       }
     },
     methods: {
-      srcBadge: function(src) {
-        return `source-${src}`
-      },
-
       toggleStmts: function() {
         if (this.stmts == null)
           this.getStmts();
@@ -104,11 +89,6 @@
         return true;
       }
     },
-    computed: {
-      sources: function() {
-        return this.$sources;
-      }
-    }
   }
 </script>
 
