@@ -79,6 +79,7 @@
         query_strs.push(`offset=${this.next_offset}`);
         query_strs.push("format=json-js");
         query_strs.push("with_english=true");
+        query_strs.push("strict=true");
 
         const resp = await fetch(this.$stmt_url + '?' + query_strs.join('&'));
         const resp_json = await resp.json();
