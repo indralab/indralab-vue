@@ -27,14 +27,14 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
-                 v-show='show_buttons'
-                 v-on:click='loadMore'>
-              Load {{ next_batch }} more...
+                 v-show='show_buttons || ( loadable && !loaded)'
+                 @click='loadMore'>
+              Load {{ loaded ? next_batch : '' }} more...
             </div>
             <div class='text-center clickable'
                  v-show='show_buttons'
-                 v-on:click='loadAll'>
-              Load all {{ evidence.length - end_n }} remaining...
+                 @click='loadAll'>
+              Load all {{ base_list.length - end_n }} remaining...
             </div>
           </div>
 
@@ -55,10 +55,50 @@
       english: String,
       hash: String,
       sources: Object,
+      loadable: {
+        type: Boolean,
+        default: false,
+      }
+    },
+    data: function() {
+      return {
+        searching: false,
+        loaded: false,
+        loaded_evidence: null
+      }
+    },
+    methods: {
+      getMore: async function() {
+        /**
+         * Get more evidence for this statement (e.g. hash)
+         */
+        if (this.searching || this.loaded)
+          return false;
+
+        this.searching = true;
+
+        let params = [
+          'format=json-js',
+        ];
+
+        const resp = await fetch(this.$stmt_hash_url + this.hash
+                + '?' + params.join('&'));
+        const resp_json = await resp.json();
+        window.console.log(resp_json);
+
+        this.loaded_evidence = resp_json.statements[this.hash].evidence;
+        this.loaded = true;
+
+        this.searching = false;
+        return true;
+      }
     },
     computed: {
       base_list: function() {
-        return this.evidence;
+        if (this.loaded_evidence)
+          return this.loaded_evidence;
+        else
+          return this.evidence;
       },
       total_curations: function() {
         let total_curations = 0;
@@ -66,7 +106,7 @@
           total_curations += this.evidence[ev_id].num_curations > 0;
         }
         return total_curations;
-      }
+      },
     },
     mixins: [expander_mixin, piecemeal_mixin]
   }

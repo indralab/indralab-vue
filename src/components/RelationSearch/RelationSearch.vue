@@ -43,6 +43,7 @@
       <span v-for="rel_id in list_shown" :key="rel_id">
         <relation v-bind="relation_lookup[rel_id]"></relation>
       </span>
+      <span v-show="searching">Loading...</span>
     </div>
   </div>
 </template>

@@ -17,6 +17,7 @@
                      :key="hash"
                      :english="stmt.english"
                      :hash="hash"
+                     :loadable="true"
                      :sources="stmt_source_counts[hash]"
                      :evidence="stmt.evidence"></statement>
         </div>
