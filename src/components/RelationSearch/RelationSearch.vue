@@ -107,6 +107,12 @@
       },
 
       searchButton: async function() {
+        for (let ag of this.agents) {
+            if (!ag.grounding) {
+                alert("Please select an agent.")
+                return;
+            }
+        }
         this.next_offset = 0;
         this.relation_order = null;
         this.relation_lookup = null;
