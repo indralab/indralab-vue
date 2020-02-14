@@ -109,7 +109,7 @@
       searchButton: async function() {
         for (let ag of this.agents) {
             if (!ag.grounding) {
-                alert("Please select an agent.")
+                alert("Please fill out agent form completely.");
                 return;
             }
         }
@@ -134,13 +134,13 @@
         let query_strs = [];
 
         // Format the agents into the query.
-        let tagged_ag, term, role;
+        let tagged_ag, gnd, role;
         for (let idx in this.agents) {
           window.console.log(idx);
-          term = this.agents[idx].grounding.term;
+          gnd = this.agents[idx].grounding;
           role = this.agents[idx].role;
 
-          tagged_ag = term.id + '@' + term.db;
+          tagged_ag = gnd.id + '@' + gnd.db;
           if (role === 'none')
             query_strs.push(`agent${idx}=${tagged_ag}`);
           else
