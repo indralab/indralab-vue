@@ -4,10 +4,15 @@
     <div id='seach-box'
          v-show='show_search'>
         <h3>Select Agents</h3>
-        <div v-for="(agent, agent_idx) in agents"
+        <div class="form-inline"
+             v-for="(agent, agent_idx) in agents"
              :key='agent_idx'>
-          <button @click='removeAgent(agent_idx)'>x</button>
-          <select v-model='agent.role'>
+          <span class='click'
+                @click='removeAgent(agent_idx)'>
+              &#10005;
+          </span>
+          <select class="form-control"
+                  v-model='agent.role'>
             <option v-for='role in role_options'
                     :key='role'
                     :value='role'>
@@ -16,23 +21,34 @@
           </select>
           <agent-select v-model='agent.grounding'></agent-select>
         </div>
-        <button @click='addAgent'>Add Agent</button>
+        <span class='click' @click='addAgent'>
+            &#10133; agent constraint...
+        </span>
 
         <h3>Select Type</h3>
-        <input v-model='stmt_type'>
+        <input class="form-control"
+               type="text"
+               v-model='stmt_type'
+               placeholder="Enter statement type...">
 
         <h3>Search</h3>
-        <button @click='searchButton'
+        <button class="btn btn-primary"
+                @click='searchButton'
                 :disabled="searching">
           Search
         </button>
-        <button v-show="relation_order !== null && !empty_relations"
+        <button class="btn btn-outline-primary"
+                v-show="relation_order !== null && !empty_relations"
                 @click="show_search=false">
-          Hide Search
+          Hide Search Form
         </button>
     </div>
     <div v-show='!show_search'>
-      <button id='search-reopen' @click='show_search=true'>Edit Search</button>
+      <button class="btn btn-primary"
+              id='search-reopen'
+              @click='show_search=true'>
+          Edit Search Form
+      </button>
     </div>
     <hr>
 
@@ -209,5 +225,11 @@
 <style scoped>
   .relation-search {
     cursor: pointer
+  }
+  .click {
+    cursor: pointer;
+  }
+  span {
+    margin: 0 0.5em;
   }
 </style>

@@ -1,17 +1,23 @@
 <template>
   <span class='agent-select'>
       <span v-if="!options || options_empty">
-        <input v-model="agent_str" placeholder="Enter agent here">
-        <button @click='lookupOptions'>Ground</button>
+        <input class="form-control"
+               type="text"
+               v-model="agent_str"
+               placeholder="Enter agent here">
+        <button class="btn btn-primary" @click='lookupOptions'>Search Grounding</button>
         <span v-show='searching'>Searching...</span>
         <span v-show='options_empty'>No groundings found...</span>
       </span>
       <span v-else-if="options.length === 1">
-        <span class='frozen-box' v-html="printOption(options[0])"></span>
-        <button @click='resetOptions'>Cancel</button>
+        <span class='form-control' v-html="printOption(options[0])"></span>
+        <button class="btn btn-primary"
+                @click='resetOptions'>
+            Cancel
+        </button>
       </span>
       <span v-else>
-        <select v-model='selected_option_idx'>
+        <select class="form-control" v-model='selected_option_idx'>
           <option :value='-1' selected disabled hidden>Select grounding option...</option>
           <option v-for='(option, option_idx) in options'
                   :key='option_idx'
@@ -19,7 +25,10 @@
                   v-html="printOption(option)">
           </option>
         </select>
-        <button @click='resetOptions'>Cancel</button>
+        <button class="btn btn-primary"
+                @click='resetOptions'>
+            Cancel
+        </button>
       </span>
     </span>
 </template>
@@ -77,5 +86,7 @@
 </script>
 
 <style scoped>
-
+  button {
+    margin: 0 0.5em;
+  }
 </style>
