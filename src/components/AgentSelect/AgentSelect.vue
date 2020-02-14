@@ -1,11 +1,29 @@
 <template>
   <span class='agent-select'>
       <span v-if="!options || options_empty">
+        text:
         <input class="form-control"
                type="text"
                v-model="agent_str"
                placeholder="Enter agent here">
-        <button class="btn btn-primary" @click='lookupOptions'>Search Grounding</button>
+        namespace:
+        <select v-model="namespace"
+                class="form-control"
+                title="namespace">
+          <option v-for="option in namespace_options"
+                  :key="option"
+                  :value="option">
+            {{ option }}
+          </option>
+        </select>
+        <input v-if="namespace === 'other'"
+               v-model="custom_namespace"
+               placeholder="Enter namespace...">
+        OR
+        <button class="btn btn-primary"
+                @click='lookupOptions'>
+            Search Grounding
+        </button>
         <span v-show='searching'>Searching...</span>
         <span v-show='options_empty'>No groundings found...</span>
       </span>
@@ -43,6 +61,16 @@
         searching: false,
         options: null,
         selected_option_idx: -1,
+        namespace: "auto",
+        namespace_options: [
+          "auto",
+          "text",
+          "name",
+          "fplx",
+          "hgnc",
+          "other"
+        ],
+        custom_namespace: null,
       }
     },
     methods: {
@@ -64,7 +92,8 @@
       },
       printOption: function(option) {
         let term = option.term;
-        return `<b>${term.entry_name}</b> (score: ${option.score.toFixed(2)}, ${term.status} from ${term.source})`;
+        return (`<b>${term.entry_name}</b> (score: ${option.score.toFixed(2)}, `
+                + `${term.status} from ${term.source})`);
       }
     },
     computed: {
@@ -72,14 +101,31 @@
         if (!this.options)
           return false;
         return this.options.length === 0;
+      },
+      grounding: function() {
+        if (!this.agent_str)
+          return null;
+        else
+          if (!this.options)
+            if (this.namespace !== 'other')
+              return {id: this.agent_str, db: this.namespace.toUpperCase()};
+            else if (this.custom_namespace)
+              return {id: this.agent_str, db: this.custom_namespace.toUpperCase()};
+            else
+              return null;
+          else
+            if (this.selected_option_idx < 0)
+              return null;
+            else
+              return {
+                id: this.options[this.selected_option_idx].term.id,
+                db: this.options[this.selected_option_idx].term.db
+              }
       }
     },
     watch: {
-      selected_option_idx: function(selected_option_idx) {
-        if (selected_option_idx < 0)
-          this.$emit('input', null);
-        else
-          this.$emit('input', this.options[selected_option_idx]);
+      grounding: function(grounding) {
+        this.$emit('input', grounding);
       }
     }
   }
