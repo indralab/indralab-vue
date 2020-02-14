@@ -2,8 +2,8 @@
   <span class="ref-link">
     <span v-if="best_ref.link">
       <a :href="best_ref.link"
-         @mouseover="getLinkTitle(best_ref.type)"
-         :title="texts[best_ref.type]"
+         @mouseover="getLinkTitle"
+         :title="title_text"
          target="_blank">
         {{ best_ref.label }}
       </a>
@@ -24,7 +24,7 @@
     },
     data: function() {
       return {
-        titles: {}
+        title: null
       }
     },
     methods: {
@@ -50,12 +50,14 @@
         return link;
       },
 
-      getLinkTitle: async function (ref_type) {
-        if (this.titles)
+      getLinkTitle: async function () {
+        let ref_type = this.best_ref.type;
+        if (this.title)
             return;
+        window.console.log("Getting title for " + ref_type);
         let id, db;
         const entrez_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi';
-        this.titles[ref_type] = "Loading...";
+        this.title = "Loading...";
         switch (ref_type.toUpperCase()) {
             case 'PMID':
                 id = this.text_refs[ref_type];
@@ -66,7 +68,7 @@
                 db = 'pmc';
                 break;
             default:
-                this.titles = `Cannot retrieve titles for ${ref_type}'s.`;
+                this.title = `Cannot retrieve titles for ${ref_type}'s.`;
                 return;
         }
         let url = `${entrez_url}?id=${id}&retmode=json&db=${db}`;
@@ -87,7 +89,7 @@
               }
               n += 1;
           }
-        this.titles[ref_type] = `${auth_str}, "${pmd.title}", ${pmd.source}, ${pmd.pubdate}`;
+        this.title = `${auth_str}, "${pmd.title}", ${pmd.source}, ${pmd.pubdate}`;
       }
     },
     computed: {
@@ -110,15 +112,11 @@
           }
       },
 
-      texts: function() {
-        const texts = {};
-        Object.entries(this.titles).forEach((ref_type, text) => {
-          if (text)
-            texts[ref_type] = text;
-          else
-            texts[ref_type] = "Hover to see info.";
-        });
-        return texts;
+      title_text: function() {
+        if (this.title)
+          return this.title;
+        else
+          return "Hover to see info.";
       }
     }
   }
