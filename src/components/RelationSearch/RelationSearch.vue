@@ -129,7 +129,7 @@
         // Format the statement type into the query.
         if (this.stmt_type !== null) {
           if (this.stmt_type.trim()) {
-            query_strs.push(`stmt_type=${this.stmt_type}`);
+            query_strs.push(`type=${this.stmt_type}`);
           }
         }
 
