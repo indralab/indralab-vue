@@ -1,18 +1,23 @@
-import * as dispComponents from './components'
+import * as ilComponents from './components'
 
-const install = (Vue) => {
-  Vue.prototype.$curation_url = "";
-  Vue.prototype.$curation_list_url = "";
-  Object.values(dispComponents).forEach(dispComponent => {
-    Vue.use(dispComponent);
+const install = (vue) => {
+  Object.values(ilComponents).forEach(comp => {
+    window.console.log("Indralab Vue Installing " + comp.name);
+    vue.use(comp);
   })
 };
 
-if (typeof window != 'undefined' && window.Vue) {
+if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue)
 }
 
 export default install
 
-export {default as TimeView} from './components/TimeView'
-export {default as AmountView} from './components/AmountView'
+export {default as Statement} from './components/Statement'
+export {default as Evidence} from './components/Evidence'
+export {default as RefLink} from './components/RefLink'
+export {default as CurationRow} from './components/CurationRow'
+export {default as AgentSelect} from './components/AgentSelect'
+export {default as RelationSearch} from './components/RelationSearch'
+export {default as Relation} from './components/Relation'
+export {default as SourceDisplay} from './components/SourceDisplay'

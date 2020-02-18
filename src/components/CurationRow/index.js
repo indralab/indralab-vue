@@ -1,6 +1,6 @@
-import dispComponent from './CurationRow'
+import ilComponent from './CurationRow'
 
 export default Vue => {
-    Vue.component(dispComponent.name, dispComponent);
+    Vue.component(ilComponent.name, ilComponent);
 }
 

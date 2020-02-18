@@ -63,7 +63,7 @@
              <div class='col-3'>
                {{ entry.date }}
              </div>
-             <div v-for='attr in ["email", "error_type", "comment", "source"]'
+             <div v-for='attr in ["curator", "tag", "text", "source"]'
                   :key="attr"
                   class='col'>
                <span v-if='entry[attr]'>
@@ -129,7 +129,6 @@
         },
 
         loadPrevious: function() {
-            console.log("Loading previous curations.");
             this.getCurations();
         },
 
@@ -140,12 +139,11 @@
 
         submitCuration: async function() {
             let cur_dict = {
-                error_type: this.error_type,
-                comment: this.comment,
-                source_hash: this.source_hash,
-                stmt_hash: this.stmt_hash
+                tag: this.error_type,
+                text: this.comment,
+                ev_hash: this.source_hash,
             };
-            const resp = await fetch(this.$curation_url, {
+            const resp = await fetch(this.$curation_url + '/' + this.stmt_hash, {
                     method: 'POST',
                     body: JSON.stringify(cur_dict),
                     headers: {'Content-Type': 'application/json'}
@@ -175,16 +173,16 @@
                     break;
             }
             const data = await resp.json();
-            this.console.log('Got back: ' + JSON.stringify(data));
+            window.console.log('Got back: ' + JSON.stringify(data));
         },
 
         getCurations: async function() {
             const resp = await fetch(`${this.$curation_list_url}/${this.stmt_hash}/${this.source_hash}`, {
                     method: 'GET',
                  });
-            this.console.log('Response Status: ' + resp.status);
+            window.console.log('Response Status: ' + resp.status);
             const data = await resp.json();
-            this.console.log('Got back: ' + JSON.stringify(data));
+            window.console.log('Got back: ' + JSON.stringify(data));
             this.previous = data;
         },
     }

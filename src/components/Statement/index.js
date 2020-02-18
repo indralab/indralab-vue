@@ -1,5 +1,5 @@
-import dispComponent from './Statement'
+import ilComponent from './Statement'
 
 export default Vue => {
-    Vue.component(dispComponent.name, dispComponent);
+    Vue.component(ilComponent.name, ilComponent);
 }
