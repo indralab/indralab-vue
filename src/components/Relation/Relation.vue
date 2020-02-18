@@ -25,7 +25,7 @@
                      :hash="hash"
                      :loadable="true"
                      :sources="stmt_source_counts[hash]"
-                     :num_curations="num_curations[hash]"
+                     :num_curations="cur_counts[hash]"
                      :evidence="stmt.evidence"
                      :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>

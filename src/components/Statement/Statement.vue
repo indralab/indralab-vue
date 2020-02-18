@@ -90,7 +90,8 @@
 
         let params = [
           'format=json-js',
-          'with_english=true'
+          'with_english=true',
+          'with_cur_counts=true'
         ];
 
         const resp = await fetch(this.$stmt_hash_url + this.hash
