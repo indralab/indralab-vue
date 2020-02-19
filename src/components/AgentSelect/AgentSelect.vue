@@ -17,6 +17,7 @@
           </option>
         </select>
         <input v-if="namespace === 'other'"
+               class="form-control"
                v-model="custom_namespace"
                placeholder="Enter namespace...">
         OR
@@ -93,7 +94,7 @@
       printOption: function(option) {
         let term = option.term;
         return (`<b>${term.entry_name}</b> (score: ${option.score.toFixed(2)}, `
-                + `${term.status} from ${term.source})`);
+                + `${term.id} from ${term.db})`);
       }
     },
     computed: {
