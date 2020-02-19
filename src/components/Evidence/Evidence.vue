@@ -5,7 +5,7 @@
       <div class='col-1'>
         <div class='row'>
           <div class='col-3 nvm clickable text-center'
-               :class="{ 'has-curation-badge': num_curations }"
+               :class="{ 'has-curation-badge': num_curations > 0 }"
                v-on:click='toggleCuration'
                :title='num_curations'>
             &#9998;
@@ -67,4 +67,16 @@
     overflow-x: hidden;
   }
 
+  .has-curation-badge {
+    background-color: #d3fccf;
+    border-radius: 1em;
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    opacity: 60%;
+  }
 </style>

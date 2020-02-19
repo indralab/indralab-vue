@@ -4,7 +4,13 @@
          :style="`cursor: ${(searching) ? 'progress': 'pointer'};`"
          @click="toggleStmts">
       <div class='col text-left'>
-        <h4 v-html="english"></h4>
+        <h4>
+          <span v-html="english"></span>
+          <small v-if='cur_count'
+                 class='badge badge-success badge-pill'>
+            &#9998; {{ cur_count }}
+          </small>
+        </h4>
       </div>
       <div class="col-auto text-right">
         <source-display :source_counts="source_counts"></source-display>
@@ -19,7 +25,10 @@
                      :hash="hash"
                      :loadable="true"
                      :sources="stmt_source_counts[hash]"
-                     :evidence="stmt.evidence"></statement>
+                     :num_curations="cur_counts[hash]"
+                     :evidence="stmt.evidence"
+                     :total_evidence="evidence_totals[hash]"
+                     :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>
       </div>
     </div>
@@ -41,7 +50,11 @@
       english: String,
       source_counts: Object,
       agents: Object,
-      type: String
+      type: String,
+      cur_count: {
+        type: Number,
+        default: 0
+      }
     },
     data: function() {
       return {
@@ -50,6 +63,8 @@
         stmt_source_counts: null,
         searching: false,
         next_offset: 0,
+        cur_counts: null,
+        evidence_totals: null,
       }
     },
     methods: {
@@ -80,6 +95,7 @@
         query_strs.push(`offset=${this.next_offset}`);
         query_strs.push("format=json-js");
         query_strs.push("with_english=true");
+        query_strs.push("with_cur_counts=true");
         query_strs.push("strict=true");
 
         const resp = await fetch(this.$stmt_url + '?' + query_strs.join('&'));
@@ -89,6 +105,8 @@
         this.stmts = resp_json.statements;
         this.stmt_source_counts = resp_json.source_counts;
         this.next_offset = resp_json.offset + resp_json.statements_returned;
+        this.cur_counts = resp_json.num_curations;
+        this.evidence_totals = resp_json.evidence_totals;
 
         this.searching = false;
         return true;

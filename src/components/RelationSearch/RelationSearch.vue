@@ -157,6 +157,7 @@
 
         query_strs.push('limit=50');
         query_strs.push(`offset=${this.next_offset}`);
+        query_strs.push('with_cur_counts=true');
         window.console.log(query_strs);
 
         // Make the query
@@ -234,8 +235,5 @@
   }
   .click {
     cursor: pointer;
-  }
-  span {
-    margin: 0 0.5em;
   }
 </style>

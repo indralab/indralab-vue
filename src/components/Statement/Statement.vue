@@ -27,7 +27,7 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
-                 v-show='show_buttons || ( loadable && !loaded)'
+                 v-show='show_buttons || ( loadable && !loaded && total_evidence > list_shown.length )'
                  @click='loadMore'>
               Load {{ loaded ? next_batch : '' }} more...
             </div>
@@ -55,9 +55,18 @@
       english: String,
       hash: String,
       sources: Object,
+      total_evidence: Number,
+      num_curations: {
+        type: Number,
+        default: null
+      },
       loadable: {
         type: Boolean,
         default: false,
+      },
+      init_expanded: {
+        type: Boolean,
+        default: false
       }
     },
     data: function() {
@@ -66,6 +75,9 @@
         loaded: false,
         loaded_evidence: null
       }
+    },
+    created: function () {
+      this.show_list = this.init_expanded;
     },
     methods: {
       getMore: async function() {
@@ -79,6 +91,8 @@
 
         let params = [
           'format=json-js',
+          'with_english=true',
+          'with_cur_counts=true'
         ];
 
         const resp = await fetch(this.$stmt_hash_url + this.hash
@@ -101,6 +115,8 @@
           return this.evidence;
       },
       total_curations: function() {
+        if (this.num_curations != null)
+          return this.num_curations;
         let total_curations = 0;
         for (let ev_id in this.evidence.slice(0, this.end_n)) {
           total_curations += this.evidence[ev_id].num_curations > 0;
