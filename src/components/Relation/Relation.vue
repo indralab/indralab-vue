@@ -27,6 +27,7 @@
                      :sources="stmt_source_counts[hash]"
                      :num_curations="cur_counts[hash]"
                      :evidence="stmt.evidence"
+                     :total_evidence="evidence_totals[hash]"
                      :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>
       </div>
@@ -63,6 +64,7 @@
         searching: false,
         next_offset: 0,
         cur_counts: null,
+        evidence_totals: null,
       }
     },
     methods: {
@@ -104,6 +106,7 @@
         this.stmt_source_counts = resp_json.source_counts;
         this.next_offset = resp_json.offset + resp_json.statements_returned;
         this.cur_counts = resp_json.num_curations;
+        this.evidence_totals = resp_json.evidence_totals;
 
         this.searching = false;
         return true;

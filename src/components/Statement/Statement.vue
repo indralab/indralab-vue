@@ -27,7 +27,7 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
-                 v-show='show_buttons || ( loadable && !loaded)'
+                 v-show='show_buttons || ( loadable && !loaded && total_evidence > list_shown.length )'
                  @click='loadMore'>
               Load {{ loaded ? next_batch : '' }} more...
             </div>
@@ -55,6 +55,7 @@
       english: String,
       hash: String,
       sources: Object,
+      total_evidence: Number,
       num_curations: {
         type: Number,
         default: null
