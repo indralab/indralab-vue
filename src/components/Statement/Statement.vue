@@ -66,6 +66,10 @@
       init_expanded: {
         type: Boolean,
         default: false
+      },
+      show_total_ev_only: {
+        type: Boolean,
+        default: false
       }
     },
     data: function() {
@@ -132,13 +136,16 @@
       },
       num_evidence: function() {
         let ret = '';
-        if (this.evidence != null)
+        if (this.evidence != null && !this.show_total_ev_only)
           ret += this.evidence.length;
         else
           ret += '0';
 
         if (this.total_evidence)
-          ret += `/${this.total_evidence}`;
+          if ( !this.show_total_ev_only )
+            ret += `/${this.total_evidence}`;
+          else
+            ret += this.total_evidence;
         return ret;
       }
     },
