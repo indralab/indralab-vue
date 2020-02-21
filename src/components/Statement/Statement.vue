@@ -6,7 +6,7 @@
           <span v-html='english'></span>
           <small v-if="!sources"
                  class='badge badge-secondary badge-pill'>
-            {{ evidence.length }}
+            {{ num_evidence }}
           </small>
           <small v-if='total_curations'
                  class='badge badge-success badge-pill'>
@@ -130,6 +130,17 @@
         }
         return total_curations;
       },
+      num_evidence: function() {
+        let ret = '';
+        if (this.evidence != null)
+          ret += this.evidence.length;
+        else
+          ret += '0';
+
+        if (this.total_evidence)
+          ret += `/${this.total_evidence}`;
+        return ret;
+      }
     },
     mixins: [piecemeal_mixin]
   }
@@ -142,5 +153,4 @@
   .clickable:hover {
     background-color: #e0e0e9;
   }
-
 </style>
