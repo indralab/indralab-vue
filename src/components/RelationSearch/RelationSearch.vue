@@ -7,7 +7,7 @@
         <div class="form-inline"
              v-for="(agent, agent_idx) in agents"
              :key='agent_idx'>
-          <span class='click'
+          <span class='spaced click'
                 @click='removeAgent(agent_idx)'>
               &#10005;
           </span>
@@ -21,7 +21,7 @@
           </select>
           <agent-select v-model='agent.grounding'></agent-select>
         </div>
-        <span class='click' @click='addAgent'>
+        <span class='spaced click' @click='addAgent'>
             &#10133; agent constraint...
         </span>
 
@@ -235,5 +235,8 @@
   }
   .click {
     cursor: pointer;
+  }
+  .spaced {
+    margin: 0 0.5em;
   }
 </style>

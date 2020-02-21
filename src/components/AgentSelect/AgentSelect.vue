@@ -21,7 +21,7 @@
                v-model="custom_namespace"
                placeholder="Enter namespace...">
         OR
-        <button class="btn btn-primary"
+        <button class="agent-select-button btn btn-primary"
                 @click='lookupOptions'>
             Search Grounding
         </button>
@@ -44,7 +44,7 @@
                   v-html="printOption(option)">
           </option>
         </select>
-        <button class="btn btn-primary"
+        <button class="agent-select-button btn btn-primary"
                 @click='resetOptions'>
             Cancel
         </button>
@@ -133,7 +133,7 @@
 </script>
 
 <style scoped>
-  button {
+  .agent-select-button {
     margin: 0 0.5em;
   }
 </style>
