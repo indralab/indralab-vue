@@ -45,7 +45,6 @@
 </template>
 
 <script>
-  import expander_mixin from '../expander_mixin';
   import piecemeal_mixin from '../piecemeal_mixin'
 
   export default {
@@ -71,6 +70,7 @@
     },
     data: function() {
       return {
+        show_list: false,
         searching: false,
         loaded: false,
         loaded_evidence: null
@@ -105,7 +105,14 @@
 
         this.searching = false;
         return true;
-      }
+      },
+      toggleList: function() {
+        if (this.evidence == null || this.evidence.length === 0 )
+           if (this.loadable)
+             this.getMore();
+
+        this.show_list = !this.show_list;
+      },
     },
     computed: {
       base_list: function() {
@@ -124,7 +131,7 @@
         return total_curations;
       },
     },
-    mixins: [expander_mixin, piecemeal_mixin]
+    mixins: [piecemeal_mixin]
   }
 </script>
 
