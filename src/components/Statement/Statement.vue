@@ -136,10 +136,16 @@
       },
       num_evidence: function() {
         let ret = '';
-        if (this.evidence != null && !this.show_total_ev_only)
-          ret += this.evidence.length;
-        else
-          ret += '0';
+        if ( !this.show_total_ev_only ) {
+          let n = 0;
+          if (this.evidence != null)
+            n += this.evidence.length;
+          if (this.loaded_evidence != null)
+            n += this.loaded_evidence.length;
+          ret += n;
+        } else {
+          ret += 0;
+        }
 
         if (this.total_evidence)
           if ( !this.show_total_ev_only )
