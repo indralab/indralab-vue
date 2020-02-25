@@ -27,7 +27,7 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
-                 v-show='show_buttons || ( loadable && !loaded && total_evidence > list_shown.length )'
+                 v-show='show_load_more'
                  @click='loadMore'>
               Load {{ loaded ? next_batch : '' }} more...
             </div>
@@ -119,6 +119,14 @@
       },
     },
     computed: {
+      show_load_more: function() {
+        return this.show_buttons || (
+          this.loadable
+          && !this.loaded
+          && this.total_evidence > this.list_shown.length
+          && this.list_shown.length
+        )
+      },
       base_list: function() {
         if (this.loaded_evidence)
           return this.loaded_evidence;
