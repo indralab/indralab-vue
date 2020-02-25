@@ -143,7 +143,11 @@
                 text: this.comment,
                 ev_hash: this.source_hash,
             };
-            const resp = await fetch(this.$curation_url + '/' + this.stmt_hash, {
+            let url = this.$curation_url;
+            if (this.$curation_url[this.$curation_url.length -1] !== '/')
+              url += '/';
+            url += this.stmt_hash;
+            const resp = await fetch(url, {
                     method: 'POST',
                     body: JSON.stringify(cur_dict),
                     headers: {'Content-Type': 'application/json'}
