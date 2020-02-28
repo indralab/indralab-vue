@@ -70,6 +70,10 @@
       show_total_ev_only: {
         type: Boolean,
         default: false
+      },
+      url: {
+        type: String,
+        default: null
       }
     },
     data: function() {
@@ -99,7 +103,7 @@
           'with_cur_counts=true'
         ];
 
-        const resp = await fetch(this.$stmt_hash_url + this.hash
+        const resp = await fetch(this.evidence_url + this.hash
                 + '?' + params.join('&'));
         const resp_json = await resp.json();
         window.console.log(resp_json);
@@ -161,6 +165,11 @@
           else
             ret += this.total_evidence;
         return ret;
+      },
+      evidence_url: function() {
+        if (this.url != null)
+          return this.url;
+        return this.$stmt_hash_url
       }
     },
     mixins: [piecemeal_mixin]
