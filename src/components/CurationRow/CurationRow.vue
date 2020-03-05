@@ -37,16 +37,6 @@
             Submit
           </button>
         </div>
-        <div class='curation_button'
-             style='display:inline-block;
-                    vertical-align: middle;'>
-          <button type='button'
-                  class='btn btn-default btn-submit pull-right'
-                  style='padding: 2px 6px'
-                  @click='loadPrevious'>
-            Load Previous
-          </button>
-        </div>
         <div class='submission_status'
              style='display:inline-block;
                     vertical-align: middle;'>
@@ -55,13 +45,27 @@
         <div v-show='message'>
           message: {{ message }}
         </div>
-        <div v-if='previous'>
-          <h5>Prior Curations</h5>
+        <div v-if='previous && previous.length' class="curation-panel">
+          <h5>
+            Prior Curations
+            <div class='curation_button'
+                 style='display:inline-block;
+                        vertical-align: middle;'>
+              <button type='button'
+                      class='btn btn-default btn-submit pull-right'
+                      style='padding: 2px 6px'
+                      @click='loadPrevious'>
+                <img src='https://bigmech.s3.amazonaws.com/indra-db/reload.png'
+                     style='width: 1em; height: 1em'>
+              </button>
+            </div>
+          </h5>
+          <hr>
           <div v-for='entry in previous'
               :key="entry.date"
               class='row'>
            <div class='col-3'>
-             {{ entry.date }}
+             {{ entry.date.toLocaleString() }}
            </div>
            <div v-for='attr in ["curator", "tag", "text", "source"]'
                 :key="attr"
@@ -191,12 +195,26 @@
         window.console.log('Response Status: ' + resp.status);
         const data = await resp.json();
         window.console.log('Got back: ' + JSON.stringify(data));
+        for (let entry of data)
+          entry.date = new Date(entry.date);
         this.previous = data;
       },
+    },
+    watch: {
+      open: function(newOpen, oldOpen) {
+        if (!oldOpen && newOpen && this.previous == null)
+          this.getCurations()
+      }
     }
   }
 </script>
 
 <style scoped>
+  .curation-panel {
+    border: 1px solid #0d5aa7;
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 0.5em 0;
+  }
 
 </style>
