@@ -1,12 +1,12 @@
 <template>
   <span class='agent-select'>
       <span v-if="!options || options_empty">
-        text:
+        <span class="label">text:</span>
         <input class="form-control"
                type="text"
                v-model="agent_str"
                placeholder="Enter agent here">
-        namespace:
+        <span class="label">namespace:</span>
         <select v-model="namespace"
                 class="form-control"
                 title="namespace">
@@ -21,7 +21,7 @@
                v-model="custom_namespace"
                placeholder="Enter namespace...">
         OR
-        <button class="btn btn-primary"
+        <button class="agent-select-button btn btn-primary"
                 @click='lookupOptions'>
             Search Grounding
         </button>
@@ -44,7 +44,7 @@
                   v-html="printOption(option)">
           </option>
         </select>
-        <button class="btn btn-primary"
+        <button class="agent-select-button btn btn-primary"
                 @click='resetOptions'>
             Cancel
         </button>
@@ -133,7 +133,14 @@
 </script>
 
 <style scoped>
-  button {
-    margin: 0 0.5em;
+  .agent-select {
+    margin: 0.2em;
+  }
+  select, input, button {
+    margin: 0.2em;
+  }
+  .label {
+    margin-left: 0.5em;
+    margin-right: 0.2em;
   }
 </style>

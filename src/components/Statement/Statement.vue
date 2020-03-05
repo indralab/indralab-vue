@@ -6,7 +6,7 @@
           <span v-html='english'></span>
           <small v-if="!sources"
                  class='badge badge-secondary badge-pill'>
-            {{ evidence.length }}
+            {{ num_evidence }}
           </small>
           <small v-if='total_curations'
                  class='badge badge-success badge-pill'>
@@ -27,7 +27,7 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
-                 v-show='show_buttons || ( loadable && !loaded && total_evidence > list_shown.length )'
+                 v-show='show_load_more'
                  @click='loadMore'>
               Load {{ loaded ? next_batch : '' }} more...
             </div>
@@ -45,7 +45,6 @@
 </template>
 
 <script>
-  import expander_mixin from '../expander_mixin';
   import piecemeal_mixin from '../piecemeal_mixin'
 
   export default {
@@ -67,10 +66,19 @@
       init_expanded: {
         type: Boolean,
         default: false
+      },
+      show_total_ev_only: {
+        type: Boolean,
+        default: false
+      },
+      url: {
+        type: String,
+        default: null
       }
     },
     data: function() {
       return {
+        show_list: false,
         searching: false,
         loaded: false,
         loaded_evidence: null
@@ -95,7 +103,7 @@
           'with_cur_counts=true'
         ];
 
-        const resp = await fetch(this.$stmt_hash_url + this.hash
+        const resp = await fetch(this.evidence_url + this.hash
                 + '?' + params.join('&'));
         const resp_json = await resp.json();
         window.console.log(resp_json);
@@ -105,9 +113,24 @@
 
         this.searching = false;
         return true;
-      }
+      },
+      toggleList: function() {
+        if (this.evidence == null || this.evidence.length === 0 )
+           if (this.loadable)
+             this.getMore();
+
+        this.show_list = !this.show_list;
+      },
     },
     computed: {
+      show_load_more: function() {
+        return this.show_buttons || (
+          this.loadable
+          && !this.loaded
+          && this.total_evidence > this.list_shown.length
+          && this.list_shown.length
+        )
+      },
       base_list: function() {
         if (this.loaded_evidence)
           return this.loaded_evidence;
@@ -123,8 +146,33 @@
         }
         return total_curations;
       },
+      num_evidence: function() {
+        let ret = '';
+        if ( !this.show_total_ev_only ) {
+          let n = 0;
+          if (this.evidence != null)
+            n += this.evidence.length;
+          if (this.loaded_evidence != null)
+            n += this.loaded_evidence.length;
+          ret += n;
+        } else {
+          ret += 0;
+        }
+
+        if (this.total_evidence)
+          if ( !this.show_total_ev_only )
+            ret += `/${this.total_evidence}`;
+          else
+            ret += this.total_evidence;
+        return ret;
+      },
+      evidence_url: function() {
+        if (this.url != null)
+          return this.url;
+        return this.$stmt_hash_url
+      }
     },
-    mixins: [expander_mixin, piecemeal_mixin]
+    mixins: [piecemeal_mixin]
   }
 </script>
 
@@ -135,5 +183,4 @@
   .clickable:hover {
     background-color: #e0e0e9;
   }
-
 </style>

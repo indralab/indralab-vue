@@ -1,1 +1,8 @@
 *.json
+
+# Node and dist
+node_modules
+dist
+
+# VSCode specifics
+.DS_Store
