@@ -114,15 +114,12 @@
         this.status = 'submitting';
         if (!this.error_type) {
           alert('Please enter an error type or "correct" for the statement in the dropdown menu.');
-          return;
-        }
-
-        if (!this.comment && this.error_type === 'other') {
+        } else if (!this.comment && this.error_type === 'other') {
           alert('Please describe the error when using option "other...".');
-          return;
+        } else {
+          this.submitCuration();
         }
 
-        this.submitCuration();
         this.submitting = false;
         if (this.status === 'submitting')
           this.status = 'unknown failure';
