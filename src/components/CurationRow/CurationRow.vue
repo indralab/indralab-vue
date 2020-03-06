@@ -33,7 +33,11 @@
             <i>{{ message }}</i>
           </span>
         </div>
-        <div v-if='previous && previous.length' class="curation-panel">
+        <div v-if="error_loading_previous">
+          <i style="color: red">Sorry, we could not load previous curations: {{error_loading_previous}}</i>
+        </div>
+        <div v-if='(previous && previous.length) || error_loading_previous'
+             class="curation-panel">
           <h5>
             Prior Curations
             <button type='button'
@@ -45,21 +49,23 @@
             </button>
           </h5>
           <hr>
-          <div v-for='entry in previous'
-               :key="entry.date.toISOString()"
-               class='row'>
-            <div class='col-3'>
-              {{ entry.date.toLocaleString() }}
-            </div>
-            <div v-for='attr in ["curator", "tag", "text", "source"]'
-                 :key="attr"
-                 class='col'>
+          <div v-if="previous && previous.length">
+            <div v-for='entry in previous'
+                 :key="entry.date.toISOString()"
+                 class='row'>
+              <div class='col-3'>
+                {{ entry.date.toLocaleString() }}
+              </div>
+              <div v-for='attr in ["curator", "tag", "text", "source"]'
+                   :key="attr"
+                   class='col'>
               <span v-if='entry[attr]'>
                 {{ entry[attr] }}
               </span>
-              <span v-else>
+                <span v-else>
                 <i>No {{ attr }} given.</i>
               </span>
+              </div>
             </div>
           </div>
         </div>
@@ -98,7 +104,8 @@
         submitting: false,
         message: "",
         previous: null,
-        status: null
+        status: null,
+        error_loading_previous: null,
       }
     },
     methods: {
@@ -181,11 +188,20 @@
           method: 'GET',
         });
         window.console.log('Response Status: ' + resp.status);
-        const data = await resp.json();
-        window.console.log('Got back: ' + JSON.stringify(data));
-        for (let entry of data)
-          entry.date = new Date(entry.date);
-        this.previous = data;
+        let data;
+        switch (resp.status) {
+          case 200:
+            data = await resp.json();
+            window.console.log('Got back: ' + JSON.stringify(data));
+            for (let entry of data)
+              entry.date = new Date(entry.date);
+            this.previous = data;
+            this.error_loading_previous = null;
+            break;
+          default:
+            this.error_loading_previous = `(${resp.status}) ${resp.statusText}`;
+            break;
+        }
       },
     },
     watch: {
