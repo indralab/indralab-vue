@@ -88,6 +88,7 @@
   export default {
     name: "CurationRow",
     props: {
+      value: String,
       open: Boolean,
       source_hash: String,
       stmt_hash: String
@@ -113,11 +114,16 @@
         submitting: false,
         message: "",
         previous: null,
+        status: null
       }
     },
     methods: {
       submitForm: function() {
+        if (this.submitting)
+          return;
+
         this.submitting = true;
+        this.status = 'submitting';
         if (!this.error_type) {
           alert('Please enter an error type or "correct" for the statement in the dropdown menu.');
           return;
@@ -130,6 +136,8 @@
 
         this.submitCuration();
         this.submitting = false;
+        if (this.status === 'submitting')
+          this.status = 'unknown failure';
       },
 
       loadPrevious: function() {
@@ -148,40 +156,39 @@
           ev_hash: this.source_hash,
         };
         let url = this.$curation_url;
-        if (this.$curation_url[this.$curation_url.length -1] !== '/')
+        if (this.$curation_url[this.$curation_url.length - 1] !== '/')
           url += '/';
         url += this.stmt_hash;
         const resp = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(cur_dict),
-            headers: {'Content-Type': 'application/json'}
-            });
+          method: 'POST',
+          body: JSON.stringify(cur_dict),
+          headers: {'Content-Type': 'application/json'}
+        });
         switch (resp.status) {
           case 200:
-            this.submitting = false;
             this.message = "Curation successful!";
             this.clear();
-            this.icon.style = "color: #00FF00";
+            this.status = 'success';
             break;
           case 400:
             this.message = resp.status + ": Bad Curation Data";
-            this.icon.style = "color: #FF0000";
+            this.status = 'failure';
             break;
           case 500:
             this.message = resp.status + ": Internal Server Error";
-            this.icon.style = "color: #FF0000";
+            this.status = 'failure';
             break;
           case 504:
             this.message = resp.status + ": Server Timeout";
-            this.icon.style = "color: #58D3F7";
+            this.status = 'timeout';
             break;
           case 401:
             this.message = resp.status + ': You are not authorized, please log in.';
-            this.icon.style = "color: #FF0000";
+            this.status = 'failure';
             break;
           default:
             this.message = resp.status + ': Uncaught error';
-            this.icon.style = "color: #FF8000";
+            this.status = 'unknown failure';
             break;
         }
         const data = await resp.json();
@@ -204,6 +211,9 @@
       open: function(newOpen, oldOpen) {
         if (!oldOpen && newOpen && this.previous == null)
           this.getCurations()
+      },
+      status: function (status) {
+        this.$emit('input', status)
       }
     }
   }
