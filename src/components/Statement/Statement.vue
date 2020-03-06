@@ -27,17 +27,18 @@
                       v-bind='ev'
                       :stmt_hash='hash'/>
             <div class='text-center clickable'
+                 :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
                  v-show='show_load_more'
                  @click='loadMore'>
               Load {{ loaded ? next_batch : '' }} more...
             </div>
             <div class='text-center clickable'
+                 :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
                  v-show='show_buttons'
                  @click='loadAll'>
               Load all {{ base_list.length - end_n }} remaining...
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -182,5 +183,8 @@
   }
   .clickable:hover {
     background-color: #e0e0e9;
+  }
+  .ev-list {
+    margin-bottom: 1em;
   }
 </style>
