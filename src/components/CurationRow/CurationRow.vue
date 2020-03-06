@@ -2,48 +2,36 @@
   <div class='container' v-show='open'>
     <div class='row cchild' style='border-top: 1px solid #FFFFFF;'>
       <div class='col' style='padding: 0px; border-top: 1px solid #FFFFFF;'>
-        <select v-model='error_type'>
-          <option value='' selected disabled hidden>
-            Select error type...
-          </option>
-          <option v-for='(option_label, option_value) in options'
-                  v-bind:value='option_value'
-                 :key='option_value'>
-            {{ option_label }}
-          </option>
-        </select>
-        <div class='form'
-           style='display:inline-block;
-                  vertical-align: middle;
-                  top: 0px'>
-          <form name='user_feedback_form'>
-            <input type='text'
-                   v-model='comment'
-                   maxlength='240'
-                   name='user_feedback'
-                   placeholder='Optional description (240 chars)'
-                   value=''
-                   style='width: 360px;'>
-          </form>
-        </div>
-        <div class='curation_button'
-             style='display:inline-block;
-                    vertical-align: middle;'>
-          <button type='button'
-                  class='btn btn-default btn-submit pull-right'
+        <div class="form-inline">
+          <select class="form-control"
+                  v-model='error_type'>
+            <option value='' selected disabled hidden>
+              Select error type...
+            </option>
+            <option v-for='(option_label, option_value) in options'
+                    v-bind:value='option_value'
+                    :key='option_value'>
+              {{ option_label }}
+            </option>
+          </select>
+          <input class="form-control"
+                 type='text'
+                 v-model='comment'
+                 maxlength='240'
+                 name='user_feedback'
+                 placeholder='Optional description (240 chars)'
+                 value=''
+                 style='width: 360px;'>
+          <button type='button curation_button'
+                  class='btn btn-secondary pull-right'
                   style='padding: 2px 6px'
                   :disabled='submitting'
                   @click='submitForm'>
             Submit
           </button>
-        </div>
-        <div class='submission_status'
-             style='display:inline-block;
-                    vertical-align: middle;'>
-          <a class='submission_status'></a>
-        </div>
-        <div v-show='message'>
-          message: {{ message }}
+          <span v-show="message">
+            {{ message }}
+          </span>
         </div>
         <div v-if='previous && previous.length' class="curation-panel">
           <h5>
@@ -225,6 +213,10 @@
     border-radius: 0.5em;
     padding: 1em;
     margin: 0.5em 0;
+  }
+  .curation_button {
+    display:inline-block;
+    vertical-align: middle;
   }
 
 </style>
