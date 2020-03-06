@@ -26,6 +26,9 @@
                       :key='ev.source_hash'
                       v-bind='ev'
                       :stmt_hash='hash'/>
+            <div class="text-center load-error" v-if="load_failure">
+              <i style="color: red">Failed to load more evidence: {{ load_failure }}</i>
+            </div>
             <div class='text-center clickable'
                  :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
                  v-show='show_load_more'
@@ -82,7 +85,8 @@
         show_list: false,
         searching: false,
         loaded: false,
-        loaded_evidence: null
+        loaded_evidence: null,
+        load_failure: null,
       }
     },
     created: function () {
@@ -106,14 +110,22 @@
 
         const resp = await fetch(this.evidence_url + this.hash
                 + '?' + params.join('&'));
-        const resp_json = await resp.json();
-        window.console.log(resp_json);
+        let success = true;
+        window.console.log(resp.status);
+        if (resp.status === 200) {
+          const resp_json = await resp.json();
+          window.console.log(resp_json);
 
-        this.loaded_evidence = resp_json.statements[this.hash].evidence;
-        this.loaded = true;
+          this.loaded_evidence = resp_json.statements[this.hash].evidence;
+          this.loaded = true;
+          this.load_failure = null;
+        } else {
+          this.load_failure = `(${resp.status}) ${resp.statusText}`;
+          success = false;
+        }
 
         this.searching = false;
-        return true;
+        return success;
       },
       toggleList: function() {
         if (this.evidence == null || this.evidence.length === 0 )
