@@ -3,7 +3,7 @@
     <div class='row cchild' style='border-top: 1px solid #FFFFFF;'>
       <div class='col' style='padding: 0px; border-top: 1px solid #FFFFFF;'>
         <div class="form-inline">
-          <select class="form-control"
+          <select class="form-control form-elem"
                   v-model='error_type'>
             <option value='' selected disabled hidden>
               Select error type...
@@ -14,7 +14,7 @@
               {{ option_label }}
             </option>
           </select>
-          <input class="form-control"
+          <input class="form-control form-elem"
                  type='text'
                  v-model='comment'
                  maxlength='240'
@@ -22,31 +22,27 @@
                  placeholder='Optional description (240 chars)'
                  value=''
                  style='width: 360px;'>
-          <button type='button curation_button'
+          <button type='button curation_button form-elem'
                   class='btn btn-secondary pull-right'
                   style='padding: 2px 6px'
                   :disabled='submitting'
                   @click='submitForm'>
             Submit
           </button>
-          <span v-show="message">
-            {{ message }}
+          <span class='message form-elem' v-show="message">
+            <i>{{ message }}</i>
           </span>
         </div>
         <div v-if='previous && previous.length' class="curation-panel">
           <h5>
             Prior Curations
-            <div class='curation_button'
-                 style='display:inline-block;
-                        vertical-align: middle;'>
-              <button type='button'
-                      class='btn btn-default btn-submit pull-right'
-                      style='padding: 2px 6px'
-                      @click='loadPrevious'>
-                <img src='https://bigmech.s3.amazonaws.com/indra-db/reload.png'
-                     style='width: 1em; height: 1em'>
-              </button>
-            </div>
+            <button type='button'
+                    class='btn btn-default btn-submit pull-right'
+                    style='padding: 2px 6px'
+                    @click='loadPrevious'>
+              <img src='https://bigmech.s3.amazonaws.com/indra-db/reload.png'
+                   style='width: 1em; height: 1em'>
+            </button>
           </h5>
           <hr>
           <div v-for='entry in previous'
@@ -211,9 +207,11 @@
     padding: 1em;
     margin: 0.5em 0;
   }
-  .curation_button {
-    display:inline-block;
-    vertical-align: middle;
+  .message {
+    color: #606060;
+  }
+  .form-elem {
+    margin: 0 0.5em;
   }
 
 </style>
