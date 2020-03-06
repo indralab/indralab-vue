@@ -50,7 +50,7 @@
           </h5>
           <hr>
           <div v-for='entry in previous'
-               :key="entry.date"
+               :key="entry.date.toISOString()"
                class='row'>
             <div class='col-3'>
               {{ entry.date.toLocaleString() }}
