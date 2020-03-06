@@ -62,21 +62,21 @@
           </h5>
           <hr>
           <div v-for='entry in previous'
-              :key="entry.date"
-              class='row'>
-           <div class='col-3'>
-             {{ entry.date.toLocaleString() }}
-           </div>
-           <div v-for='attr in ["curator", "tag", "text", "source"]'
-                :key="attr"
-                class='col'>
-             <span v-if='entry[attr]'>
-               {{ entry[attr] }}
-             </span>
-             <span v-else>
-               <i>No {{ attr }} given.</i>
-             </span>
-           </div>
+               :key="entry.date"
+               class='row'>
+            <div class='col-3'>
+              {{ entry.date.toLocaleString() }}
+            </div>
+            <div v-for='attr in ["curator", "tag", "text", "source"]'
+                 :key="attr"
+                 class='col'>
+              <span v-if='entry[attr]'>
+                {{ entry[attr] }}
+              </span>
+              <span v-else>
+                <i>No {{ attr }} given.</i>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -190,8 +190,8 @@
 
       getCurations: async function() {
         const resp = await fetch(`${this.$curation_list_url}/${this.stmt_hash}/${this.source_hash}`, {
-            method: 'GET',
-           });
+          method: 'GET',
+        });
         window.console.log('Response Status: ' + resp.status);
         const data = await resp.json();
         window.console.log('Got back: ' + JSON.stringify(data));

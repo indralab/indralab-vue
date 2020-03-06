@@ -33,13 +33,13 @@
   export default {
     name: "Evidence",
     props: {
-        text: String,
-        pmid: String,
-        source_api: String,
-        text_refs: Object,
-        num_curations: Number,
-        source_hash: String,
-        stmt_hash: String
+      text: String,
+      pmid: String,
+      source_api: String,
+      text_refs: Object,
+      num_curations: Number,
+      source_hash: String,
+      stmt_hash: String
     },
     data: function() {
         return {
@@ -47,9 +47,9 @@
         }
     },
     methods: {
-        toggleCuration: function () {
-            this.curation_shown = !this.curation_shown
-        }
+      toggleCuration: function() {
+        this.curation_shown = !this.curation_shown
+      },
     },
     computed: {
       always_text: function() {
