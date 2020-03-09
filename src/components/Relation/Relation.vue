@@ -16,6 +16,9 @@
         <source-display :source_counts="source_counts"></source-display>
       </div>
     </div>
+    <div class="error-message" v-show="search_failed">
+      <i style="color: red">Failed to find statements: {{search_failed}}</i>
+    </div>
     <div class="row stmt_list" v-show="show_stmts">
       <div class="col">
         <div class="container">
@@ -65,6 +68,7 @@
         next_offset: 0,
         cur_counts: null,
         evidence_totals: null,
+        search_failed: null,
       }
     },
     methods: {
@@ -99,17 +103,23 @@
         query_strs.push("strict=true");
 
         const resp = await fetch(this.$stmt_url + '?' + query_strs.join('&'));
-        const resp_json = await resp.json();
-        window.console.log(resp_json);
+        let success = true;
+        if (resp.status === 200) {
+          const resp_json = await resp.json();
+          window.console.log(resp_json);
 
-        this.stmts = resp_json.statements;
-        this.stmt_source_counts = resp_json.source_counts;
-        this.next_offset = resp_json.offset + resp_json.statements_returned;
-        this.cur_counts = resp_json.num_curations;
-        this.evidence_totals = resp_json.evidence_totals;
-
+          this.stmts = resp_json.statements;
+          this.stmt_source_counts = resp_json.source_counts;
+          this.next_offset = resp_json.offset + resp_json.statements_returned;
+          this.cur_counts = resp_json.num_curations;
+          this.evidence_totals = resp_json.evidence_totals;
+          this.search_failed = null;
+        } else {
+          this.search_failed = `(${resp.status}) ${resp.statusText}`
+          success = false;
+        }
         this.searching = false;
-        return true;
+        return success;
       }
     },
   }

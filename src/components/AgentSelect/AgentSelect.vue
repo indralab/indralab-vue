@@ -27,6 +27,11 @@
         </button>
         <span v-show='searching'>Searching...</span>
         <span v-show='options_empty'>No groundings found...</span>
+        <i style="color: red; cursor: default"
+           v-show="search_error"
+           :title="search_error">
+          Search failed!
+        </i>
       </span>
       <span v-else-if="options.length === 1">
         <span class='form-control' v-html="printOption(options[0])"></span>
@@ -72,6 +77,7 @@
           "other"
         ],
         custom_namespace: null,
+        search_error: null,
       }
     },
     methods: {
@@ -81,11 +87,15 @@
           `${this.$ground_url}?agent=${this.agent_str}`,
           {method: 'GET'}
           );
-        this.options = await resp.json();
+        if (resp.status === 200) {
+          this.options = await resp.json();
+          if (this.options.length === 1)
+            this.selected_option_idx = 0;
+          this.search_error = null;
+        } else {
+          this.search_error = `(${resp.status}) ${resp.statusText}`
+        }
         this.searching = false;
-
-        if (this.options.length === 1)
-          this.selected_option_idx = 0;
       },
       resetOptions: function() {
         this.options = null;

@@ -52,6 +52,9 @@
     </div>
     <hr>
 
+    <div id="error-box" class="nvm" v-show="search_error">
+      <i style="color: red">Failed to load search results: {{ search_error }}.</i>
+    </div>
     <div id='result-box' class='nvm' v-show='relation_order !== null'>
       <h3>Results</h3>
       <hr>
@@ -88,7 +91,8 @@
         relation_lookup: null,
         show_search: true,
         searching: false,
-        next_offset: 0
+        next_offset: 0,
+        search_error: null,
       }
     },
     methods: {
@@ -164,6 +168,16 @@
         let url = this.$relation_url + '?' + query_strs.join('&');
         window.console.log(url);
         const resp = await fetch(url);
+
+        // Check that the query is good (exit if not)
+        if (resp.status !== 200) {
+          this.search_error = `(${resp.status}) ${resp.statusText}`;
+          this.searching = false;
+          return false;
+        }
+        this.search_error = null;
+
+        // Unpackage the result.
         const resp_json = await resp.json();
         window.console.log(resp_json);
 
