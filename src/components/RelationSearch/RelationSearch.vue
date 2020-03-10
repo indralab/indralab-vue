@@ -144,7 +144,7 @@
           gnd = this.agents[idx].grounding;
           role = this.agents[idx].role;
 
-          tagged_ag = gnd.id + '@' + gnd.db;
+          tagged_ag = encodeURIComponent(gnd.id + '@' + gnd.db);
           if (role === 'none')
             query_strs.push(`agent${idx}=${tagged_ag}`);
           else

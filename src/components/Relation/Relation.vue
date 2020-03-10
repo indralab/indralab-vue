@@ -86,11 +86,13 @@
         this.searching = true;
 
         let query_strs = [];
+        let tagged_ag;
         for (let [idx, ag] of Object.entries(this.agents)) {
+          tagged_ag = encodeURIComponent(`${ag}@NAME`);
           if (snowflakes.includes(this.type))
-            query_strs.push(`agent${idx}=${ag}@NAME`);
+            query_strs.push(`agent${idx}=${tagged_ag}`);
           else
-            query_strs.push(`${['subject', 'object'][idx]}=${ag}@NAME`);
+            query_strs.push(`${['subject', 'object'][idx]}=${tagged_ag}`);
         }
 
         query_strs.push(`type=${this.type}`);
