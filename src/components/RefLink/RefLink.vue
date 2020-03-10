@@ -73,6 +73,11 @@
         }
         let url = `${entrez_url}?id=${id}&retmode=json&db=${db}`;
         const resp = await fetch(url, {method: 'POST'});
+        if (resp.status !== 200) {
+          this.title = "Failed to load";
+          return;
+        }
+
         const data = await resp.json();
         const pmd = data.result[id];
         let auth_str = '';
