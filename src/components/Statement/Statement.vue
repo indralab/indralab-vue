@@ -163,10 +163,10 @@
         let ret = '';
         if ( !this.show_total_ev_only ) {
           let n = 0;
-          if (this.evidence != null)
-            n += this.evidence.length;
           if (this.loaded_evidence != null)
             n += this.loaded_evidence.length;
+          else if (this.evidence != null)
+            n += this.evidence.length;
           ret += n;
         } else {
           ret += 0;
