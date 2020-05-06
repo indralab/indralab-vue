@@ -78,7 +78,8 @@
       url: {
         type: String,
         default: null
-      }
+    },
+      badges: Array
     },
     data: function() {
       return {
@@ -183,7 +184,35 @@
         if (this.url != null)
           return this.url;
         return this.$stmt_hash_url
+      },
+      displayed_badges: function() {
+        if (this.badges) {
+          let badges = []
+          for (let badge of this.badges) {
+            if (badge.label == 'evidence') {
+              badge['num'] = this.num_evidence;
+            }
+            if (badge.num) {
+              badges.push(badge)
+            }
+          }
+          return badges;
+        } else {
+          if (!this.sources) {
+            let badges = [
+              {label: 'evidence', num: this.num_evidence, color: 'grey'},
+              {label: 'curations', num: this.num_curations, symbol: '\u270E', color: '#28a745'}
+              ]
+            return badges;
+          } else {
+            let badges = [
+              {label: 'curations', num: this.num_curations, color: '#28a745'}
+              ]
+            return badges;
+          }
+        }
       }
+
     },
     mixins: [piecemeal_mixin]
   }
