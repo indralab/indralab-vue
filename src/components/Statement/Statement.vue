@@ -204,12 +204,12 @@
           if (!this.sources) {
             let badges = [
               {label: 'evidence', num: this.num_evidence, color: 'grey'},
-              {label: 'curations', num: this.num_curations, symbol: '\u270E', color: '#28a745'}
+              {label: 'curations', num: this.total_curations, symbol: '\u270E', color: '#28a745'}
               ]
             return badges;
           } else {
             let badges = [
-              {label: 'curations', num: this.num_curations, color: '#28a745'}
+              {label: 'curations', num: this.total_curations, color: '#28a745'}
               ]
             return badges;
           }
