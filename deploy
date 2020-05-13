@@ -23,7 +23,8 @@ prefix = root['prefix'] + label
 # Check that we're doing the right thing.
 s3_path = f"{root['bucket']}/{prefix}"
 
-print(f"The following files will be pushed to 's3://{s3_path}':")
+print(f"The following files will be pushed to 's3://{s3_path}' "
+      f"(they will be PUBLIC):")
 for fname in os.listdir('dist'):
     print('\t', os.path.join('dist', fname))
 res = input("Continue (Y/n)?")
@@ -39,4 +40,4 @@ for fname in os.listdir('dist'):
     fpath = os.path.join('dist', fname)
     print(f"Putting {fpath} -> s3://{s3_path}/{fname}")
     s3.upload_file(os.path.join('dist', fname), root['bucket'],
-                   f'{prefix}/{fname}')
+                   f'{prefix}/{fname}', ExtraArgs={'ACL': 'public-read'})
