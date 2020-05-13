@@ -4,13 +4,16 @@
       <div class="col text-left">
         <h4>
           <span v-html='english'></span>
-          <small v-if="!sources"
-                 class='badge badge-secondary badge-pill'>
-            {{ num_evidence }}
-          </small>
-          <small v-if='total_curations'
-                 class='badge badge-success badge-pill'>
-            &#9998; {{ total_curations }}
+          <small v-for='badge in displayed_badges'
+                :class="`badge badge-pill float-${badge.loc}`"
+                :style="`background-color: ${badge.color}; color: white;`"
+                :title="badge.title"
+                :key='badge.label'>
+              <a v-if='badge.href'
+                :style="`background-color: ${badge.color}; color: white;`"
+                :href='badge.href' target="_blank">
+                    {{ badge.symbol }}{{ badge.num }}</a>
+              <span v-else>{{ badge.symbol }}{{ badge.num }}<span>
           </small>
         </h4>
       </div>
@@ -78,7 +81,8 @@
       url: {
         type: String,
         default: null
-      }
+      },
+      badges: Array
     },
     data: function() {
       return {
@@ -163,10 +167,10 @@
         let ret = '';
         if ( !this.show_total_ev_only ) {
           let n = 0;
-          if (this.evidence != null)
-            n += this.evidence.length;
           if (this.loaded_evidence != null)
             n += this.loaded_evidence.length;
+          else if (this.evidence != null)
+            n += this.evidence.length;
           ret += n;
         } else {
           ret += 0;
@@ -183,7 +187,36 @@
         if (this.url != null)
           return this.url;
         return this.$stmt_hash_url
+      },
+      displayed_badges: function() {
+        if (this.badges) {
+          let badges = []
+          for (let badge of this.badges) {
+            if (badge.label === 'evidence') {
+              badge['num'] = this.num_evidence;
+            }
+            if (badge.num) {
+              badges.push(badge)
+            }
+          }
+          return badges;
+        } else {
+          if (!this.sources) {
+            return [
+              {label: 'evidence', num: this.num_evidence, color: 'grey'},
+              {label: 'curations', num: this.total_curations, symbol: '\u270E',
+               color: '#28a745'}
+              ];
+          } else if (this.total_curations) {
+            return [
+              {label: 'curations', num: this.total_curations, color: '#28a745'}
+              ];
+          } else {
+            return [];
+          }
+        }
       }
+
     },
     mixins: [piecemeal_mixin]
   }

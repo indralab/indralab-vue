@@ -5,7 +5,7 @@
       <div class='col-1'>
         <div class='row'>
           <div class='col-3 nvm clickable text-center'
-               :class="{ 'has-curation-badge': num_curations > 0 }"
+               :class="`${this.curation_badge}`"
                v-on:click='toggleCuration'
                :title='num_curations'
                :style="`color: ${this.icon_color};`">
@@ -39,6 +39,14 @@
       source_api: String,
       text_refs: Object,
       num_curations: Number,
+      num_correct: {
+        type: Number,
+        default: null
+      },
+      num_incorrect: {
+        type: Number,
+        default: null
+      },
       source_hash: String,
       stmt_hash: String
     },
@@ -74,6 +82,18 @@
           default:
             return '#000000'
         }
+      },
+
+      curation_badge: function() {
+        if (this.num_correct > 0) {
+          return 'has-curation-badge';
+        } else if (this.num_incorrect > 0) {
+          return 'has-incorrect-curation-badge';
+        } else if (this.num_curations > 0) {
+          return 'has-curation-badge';
+        } else {
+          return '';
+        }
       }
     }
   }
@@ -86,6 +106,11 @@
 
   .has-curation-badge {
     background-color: #d3fccf;
+    border-radius: 1em;
+  }
+
+  .has-incorrect-curation-badge {
+    background-color: #ffcccc;
     border-radius: 1em;
   }
 
