@@ -192,7 +192,7 @@
         if (this.badges) {
           let badges = []
           for (let badge of this.badges) {
-            if (badge.label == 'evidence') {
+            if (badge.label === 'evidence') {
               badge['num'] = this.num_evidence;
             }
             if (badge.num) {
@@ -202,16 +202,17 @@
           return badges;
         } else {
           if (!this.sources) {
-            let badges = [
+            return [
               {label: 'evidence', num: this.num_evidence, color: 'grey'},
-              {label: 'curations', num: this.total_curations, symbol: '\u270E', color: '#28a745'}
-              ]
-            return badges;
-          } else {
-            let badges = [
+              {label: 'curations', num: this.total_curations, symbol: '\u270E',
+               color: '#28a745'}
+              ];
+          } else if (this.total_curations) {
+            return [
               {label: 'curations', num: this.total_curations, color: '#28a745'}
-              ]
-            return badges;
+              ];
+          } else {
+            return [];
           }
         }
       }
