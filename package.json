@@ -12,7 +12,8 @@
     "build": "vue-cli-service build --target lib --name IndralabVue src/index.js",
     "lint": "vue-cli-service lint",
     "watch": "npm run build -- --watch",
-    "test": "npm run watch -- --mode development"
+    "test": "npm run watch -- --mode development",
+    "deploy": "python deploy"
   },
   "dependencies": {
     "core-js": "^3.4.4",
