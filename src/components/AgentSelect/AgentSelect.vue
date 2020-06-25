@@ -33,7 +33,7 @@
         OR
         <button class="agent-select-button btn btn-primary"
                 @click='lookupOptions'>
-            Search Grounding with GILDA
+            Ground with GILDA
         </button>
         <span v-show='searching'>Searching...</span>
         <span v-show='options_empty'>No groundings found...</span>
@@ -100,6 +100,11 @@
     methods: {
       lookupOptions: async function() {
         this.searching = true;
+        if (!this.agent_str) {
+          alert("Please enter an agent string...");
+          this.searching=false;
+          return;
+        }
         const resp = await fetch(
           `${this.$ground_url}?agent=${this.agent_str}`,
           {method: 'GET'}
