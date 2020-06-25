@@ -13,7 +13,7 @@
                 :style="`background-color: ${badge.color}; color: white;`"
                 :href='badge.href' target="_blank">
                     {{ badge.symbol }}{{ badge.num }}</a>
-              <span v-else>{{ badge.symbol }}{{ badge.num }}<span>
+              <span v-else>{{ badge.symbol }}{{ badge.num }}</span>
           </small>
         </h4>
       </div>
