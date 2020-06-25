@@ -55,12 +55,13 @@
           Edit Search Form
       </button>
     </div>
-    <hr>
 
     <div id="error-box" class="nvm" v-show="search_error">
+      <hr>
       <i style="color: red">Failed to load search results: {{ search_error }}.</i>
     </div>
     <div id='result-box' class='nvm' v-show='relation_order !== null'>
+      <hr>
       <h3>Results</h3>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
