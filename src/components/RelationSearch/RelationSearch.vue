@@ -3,38 +3,40 @@
        :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
     <div id='seach-box'
          v-show='show_search'>
-        <h3>Select Agents</h3>
+        <h3>Constrain your query</h3>
         <div class="form-inline"
-             v-for="(agent, agent_idx) in agents"
-             :key='agent_idx'>
-          <span class='spaced click'
-                @click='removeAgent(agent_idx)'>
-              &#10005;
+             v-for="(constraint, const_idx) in constraints"
+             :key='const_idx'>
+          <span v-if="!constraint.type">
+            <span class='spaced'>
+                &#10133;
+            </span>
+            <select class="form-control"
+                    @input="addConstraint(null)"
+                    v-model="constraint.type">
+              <option :value="null" selected hidden>
+                select constraint...
+              </option>
+              <option v-for="(type_val, type_name) in constraint_types"
+                      :key="type_name"
+                      :value="type_val">
+                {{ type_name }} constraint
+              </option>
+            </select>
           </span>
-          <select class="form-control"
-                  v-model='agent.role'>
-            <option v-for='role in role_options'
-                    :key='role'
-                    :value='role'>
-              {{ role }}
-            </option>
-          </select>
-          <agent-select v-model='agent.grounding'></agent-select>
+          <span v-else>
+            <span class='spaced click'
+                  @click='removeConstraint(const_idx)'>
+                &#10005;
+            </span>
+            <span v-if="constraint.type === 'HasAgent'">
+              <b>Agent:</b><agent-select v-model="constraint.constraint"></agent-select>
+            </span>
+            <span v-else-if="constraint.type === 'HasType'">
+              <b>Type:</b><type-select v-model="constraint.constraint"></type-select>
+            </span>
+          </span>
         </div>
-        <span class='spaced click' @click='addAgent'>
-            &#10133; agent constraint...
-        </span>
-
-        <h3>Select Type</h3>
-        <select class="form-control" v-model="stmt_type"
-                placeholder="Select statement type...">
-          <option :value="null" selected disabled hidden>Select type...</option>
-          <option v-for="type in stmt_types"
-                  :key="type"
-                  :value="type">
-            {{ type }}
-          </option>
-        </select>
         <button class="btn btn-primary"
                 @click='searchButton'
                 :disabled="searching">
@@ -83,13 +85,9 @@
     },
     data: function() {
       return {
-        agents: [],
-        stmt_type: null,
-        role_options: [
-          'subject',
-          'object',
-          'none',
-        ],
+        new_const_type: null,
+        constraints: [],
+        constraint_types: {agent: 'HasAgent', type: 'HasType'},
         relation_order: null,
         relation_lookup: null,
         show_search: true,
@@ -99,22 +97,22 @@
       }
     },
     methods: {
-      addAgent: function() {
-        this.agents.push({grounding: null, role: 'none'})
+      addConstraint: function(constraint_type) {
+        this.constraints.push({type: constraint_type, constraint: null, inverted: false})
       },
 
-      removeAgent: function(agent_idx) {
+      removeConstraint: function(agent_idx) {
         const new_agents = [];
-        this.agents.forEach( (entry, idx) => {
+        this.constraints.forEach( (entry, idx) => {
           if (idx === agent_idx)
             return;
           new_agents.push(entry);
         });
-        this.agents = new_agents;
+        this.constraints = new_agents;
       },
 
       searchButton: async function() {
-        for (let ag of this.agents) {
+        for (let ag of this.constraints) {
             if (!ag.grounding) {
                 alert("Please fill out agent form completely.");
                 return;
@@ -140,12 +138,12 @@
         this.searching = true;
         let query_strs = [];
 
-        // Format the agents into the query.
+        // Format the constraints into the query.
         let tagged_ag, gnd, role;
-        for (let idx in this.agents) {
+        for (let idx in this.constraints) {
           window.console.log(idx);
-          gnd = this.agents[idx].grounding;
-          role = this.agents[idx].role;
+          gnd = this.constraints[idx].grounding;
+          role = this.constraints[idx].role;
 
           tagged_ag = encodeURIComponent(gnd.id + '@' + gnd.db);
           if (role === 'none')
@@ -235,16 +233,13 @@
         return false
       },
 
-      stmt_types: function() {
-        return this.$stmt_types;
-      },
-
       base_list: function() {
         return this.relation_order;
       },
     },
     created: function() {
-      this.addAgent();
+      this.addConstraint('HasAgent');
+      this.addConstraint(null);
     },
     mixins: [piecemeal_mixin]
   }

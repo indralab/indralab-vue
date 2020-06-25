@@ -1,5 +1,14 @@
 <template>
   <span class='agent-select'>
+      <span class="label">role:</span>
+      <select class="form-control"
+              v-model='role_str'>
+        <option v-for='role in role_options'
+                :key='role'
+                :value='role'>
+          {{ role }}
+        </option>
+      </select>
       <span v-if="!options || options_empty">
         <span class="label">text:</span>
         <input class="form-control"
@@ -41,6 +50,7 @@
         </button>
       </span>
       <span v-else>
+        <span class="label">grounding:</span>
         <select class="form-control" v-model='selected_option_idx'>
           <option :value='-1' selected disabled hidden>Select grounding option...</option>
           <option v-for='(option, option_idx) in options'
@@ -63,11 +73,17 @@
     props: ['value'],
     data: function() {
       return {
+        role_str: null,
         agent_str: '',
         searching: false,
         options: null,
         selected_option_idx: -1,
         namespace: "auto",
+        role_options: [
+          'subject',
+          'object',
+          'none',
+        ],
         namespace_options: [
           "auto",
           "text",
@@ -113,15 +129,23 @@
           return false;
         return this.options.length === 0;
       },
-      grounding: function() {
+      constraint: function() {
         if (!this.agent_str)
           return null;
         else
           if (!this.options)
             if (this.namespace !== 'other')
-              return {id: this.agent_str, db: this.namespace.toUpperCase()};
+              return {
+                agent_id: this.agent_str,
+                namespace: this.namespace.toUpperCase(),
+                role: this.role_str.toUpperCase()
+              };
             else if (this.custom_namespace)
-              return {id: this.agent_str, db: this.custom_namespace.toUpperCase()};
+              return {
+                agent_id: this.agent_str,
+                namespace: this.custom_namespace.toUpperCase(),
+                role: this.role_str.toUpperCase()
+              };
             else
               return null;
           else
@@ -129,14 +153,15 @@
               return null;
             else
               return {
-                id: this.options[this.selected_option_idx].term.id,
-                db: this.options[this.selected_option_idx].term.db
+                agent_id: this.options[this.selected_option_idx].term.id,
+                namespace: this.options[this.selected_option_idx].term.db,
+                role: this.role_str.toUpperCase()
               }
       }
     },
     watch: {
-      grounding: function(grounding) {
-        this.$emit('input', grounding);
+      constraint: function(constraint) {
+        this.$emit('input', constraint);
       }
     }
   }
