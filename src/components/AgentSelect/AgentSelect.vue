@@ -3,6 +3,7 @@
       <span class="label">role:</span>
       <select class="form-control"
               v-model='role_str'>
+        <option :value="null">any</option>
         <option v-for='role in role_options'
                 :key='role'
                 :value='role'>
