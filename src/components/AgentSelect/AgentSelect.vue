@@ -3,7 +3,6 @@
       <span class="label">role:</span>
       <select class="form-control"
               v-model='role_str'>
-        <option :value="null">any</option>
         <option v-for='role in role_options'
                 :key='role'
                 :value='role'>
@@ -74,7 +73,7 @@
     props: ['value'],
     data: function() {
       return {
-        role_str: null,
+        role_str: 'any',
         agent_str: '',
         searching: false,
         options: null,
@@ -83,7 +82,7 @@
         role_options: [
           'subject',
           'object',
-          'none',
+          'any',
         ],
         namespace_options: [
           "auto",
@@ -136,33 +135,32 @@
         return this.options.length === 0;
       },
       constraint: function() {
-        if (!this.agent_str)
-          return null;
-        else
+        let ret = null;
+
+        // Handle the agent part of the query.
+        if (this.agent_str)
           if (!this.options)
             if (this.namespace !== 'other')
-              return {
+              ret = {
                 agent_id: this.agent_str,
                 namespace: this.namespace.toUpperCase(),
-                role: this.role_str.toUpperCase()
               };
             else if (this.custom_namespace)
-              return {
+              ret = {
                 agent_id: this.agent_str,
                 namespace: this.custom_namespace.toUpperCase(),
-                role: this.role_str.toUpperCase()
               };
-            else
-              return null;
           else
-            if (this.selected_option_idx < 0)
-              return null;
-            else
-              return {
+            if (this.selected_option_idx >= 0)
+              ret = {
                 agent_id: this.options[this.selected_option_idx].term.id,
                 namespace: this.options[this.selected_option_idx].term.db,
-                role: this.role_str.toUpperCase()
-              }
+              };
+
+        // Handle the role part.
+        if (ret !== null)
+          ret.role = this.role_str;
+        return ret;
       }
     },
     watch: {

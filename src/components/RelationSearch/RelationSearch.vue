@@ -103,19 +103,21 @@
       },
 
       removeConstraint: function(agent_idx) {
-        const new_agents = [];
+        const new_constraints = [];
         this.constraints.forEach( (entry, idx) => {
           if (idx === agent_idx)
             return;
-          new_agents.push(entry);
+          new_constraints.push(entry);
         });
-        this.constraints = new_agents;
+        this.constraints = new_constraints;
       },
 
       searchButton: async function() {
-        for (let ag of this.constraints) {
-            if (!ag.grounding) {
-                alert("Please fill out agent form completely.");
+        for (let query of this.constraints) {
+            if (!query.type)
+              continue
+            if (!query.constraint) {
+                alert(`Please fill out ${query.type} form completely.`);
                 return;
             }
         }
@@ -140,25 +142,29 @@
         let query_strs = [];
 
         // Format the constraints into the query.
-        let tagged_ag, gnd, role;
+        let tagged_ag, agent_id, namespace, role;
         for (let idx in this.constraints) {
           window.console.log(idx);
-          gnd = this.constraints[idx].grounding;
-          role = this.constraints[idx].role;
+          let constraint = this.constraints[idx];
+          if (constraint.type === null)
+            continue;
 
-          tagged_ag = encodeURIComponent(gnd.id + '@' + gnd.db);
-          if (role === 'none')
-            query_strs.push(`agent${idx}=${tagged_ag}`);
-          else
-            query_strs.push(`${role}=${tagged_ag}`);
+          if (constraint.type === 'HasAgent') {
+            // Handle agent constraints
+            agent_id = constraint.constraint.agent_id;
+            namespace = constraint.constraint.namespace;
+            role = constraint.constraint.role;
 
-        }
-
-        // Format the statement type into the query.
-        if (this.stmt_type !== null) {
-          if (this.stmt_type.trim()) {
-            query_strs.push(`type=${this.stmt_type}`);
+            tagged_ag = encodeURIComponent(agent_id + '@' + namespace);
+            if (role === 'any')
+              query_strs.push(`agent${idx}=${tagged_ag}`);
+            else
+              query_strs.push(`${role}=${tagged_ag}`);
+          } else if (constraint.type === 'HasType') {
+            // Handle type constraints
+            query_strs.push(`type=${constraint.constraint.stmt_types[0]}`);
           }
+
         }
 
         query_strs.push('limit=50');
