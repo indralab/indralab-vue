@@ -26,12 +26,15 @@
         </span>
 
         <h3>Select Type</h3>
-        <input class="form-control"
-               type="text"
-               v-model='stmt_type'
-               placeholder="Enter statement type...">
-
-        <h3>Search</h3>
+        <select class="form-control" v-model="stmt_type"
+                placeholder="Select statement type...">
+          <option :value="null" selected disabled hidden>Select type...</option>
+          <option v-for="type in stmt_types"
+                  :key="type"
+                  :value="type">
+            {{ type }}
+          </option>
+        </select>
         <button class="btn btn-primary"
                 @click='searchButton'
                 :disabled="searching">
@@ -230,6 +233,10 @@
         if (this.relation_order.length === 0)
           return true;
         return false
+      },
+
+      stmt_types: function() {
+        return this.$stmt_types;
       },
 
       base_list: function() {
