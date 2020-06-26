@@ -38,6 +38,9 @@
             <span v-else-if="constraint.type === 'FromMeshId'">
               <b>Mesh:</b><mesh-select v-model="constraint.constraint"></mesh-select>
             </span>
+            <span v-else-if="constraint.type === 'FromPapers'">
+              <b>Paper:</b><paper-select v-model="constraint.constraint"></paper-select>
+            </span>
             <span v-else>
               <b style="color: red;">Developer error: unhandled constraint type.</b>
             </span>
@@ -94,7 +97,12 @@
       return {
         new_const_type: null,
         constraints: [],
-        constraint_types: {agent: 'HasAgent', type: 'HasType', mesh: 'FromMeshId'},
+        constraint_types: {
+          agent: 'HasAgent',
+          type: 'HasType',
+          mesh: 'FromMeshId',
+          paper: 'FromPapers'
+        },
         relation_order: null,
         relation_lookup: null,
         show_search: true,
@@ -150,6 +158,7 @@
         // Format the constraints into the query.
         let tagged_ag, agent_id, namespace, role;
         let mesh_ids = [];
+        let paper_ids = [];
         for (let idx in this.constraints) {
           window.console.log(idx);
           let constraint = this.constraints[idx];
@@ -172,11 +181,17 @@
             query_strs.push(`type=${constraint.constraint.stmt_types[0]}`);
           } else if (constraint.type === 'FromMeshId') {
             mesh_ids.push(constraint.constraint.mesh_id);
+          } else if (constraint.type === 'FromPapers') {
+            let paper_info =  constraint.constraint.paper_list[0];
+            paper_ids.push(`${paper_info[1]}@${paper_info[0]}`);
           }
         }
 
         if (mesh_ids.length)
           query_strs.push(`mesh_ids=${mesh_ids.join(',')}`)
+
+        if (paper_ids.length)
+          query_strs.push(`paper_ids=${paper_ids.join(',')}`)
 
         query_strs.push('limit=50');
         query_strs.push(`offset=${this.next_offset}`);
