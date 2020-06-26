@@ -1,8 +1,16 @@
 <template>
   <div class='relation-search nvm'
        :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
-    <div id='seach-box'
+    <div class="row" id="search-row"
          v-show='show_search'>
+      <div class="col-1 text-left nav-btn">
+        <button class="btn"
+                :disabled="cannotGoBack"
+                @click="backButton">
+          &lt; Back
+        </button>
+      </div>
+      <div class='col-10' id='seach-box'>
         <h3>Constrain your query</h3>
         <div class="form-inline"
              v-for="(constraint, const_idx) in constraints"
@@ -46,16 +54,26 @@
             </span>
           </span>
         </div>
-        <button class="btn btn-primary"
-                @click='searchButton'
-                :disabled="searching">
-          Search
+        <div>
+          <button class="btn btn-primary"
+                  @click='searchButton'
+                  :disabled="searching">
+            Search
+          </button>
+          <button class="btn btn-outline-primary"
+                  v-show="relation_order !== null && !empty_relations"
+                  @click="show_search=false">
+            Hide Search Form
+          </button>
+        </div>
+      </div>
+      <div class="col-1 text-right nav-btn">
+        <button class="btn"
+                :disabled="cannotGoForward"
+                @click="forwardButton">
+          Forward &gt;
         </button>
-        <button class="btn btn-outline-primary"
-                v-show="relation_order !== null && !empty_relations"
-                @click="show_search=false">
-          Hide Search Form
-        </button>
+      </div>
     </div>
     <div v-show='!show_search'>
       <button class="btn btn-primary"
@@ -64,7 +82,6 @@
           Edit Search Form
       </button>
     </div>
-
     <div id="error-box" class="nvm" v-show="search_error">
       <hr>
       <i style="color: red">Failed to load search results: {{ search_error }}.</i>
@@ -110,6 +127,8 @@
         searching: false,
         next_offset: 0,
         search_error: null,
+        search_history: [],
+        history_idx: -1,
       }
     },
     methods: {
@@ -127,7 +146,9 @@
       },
 
       searchButton: async function() {
-        for (let query of this.constraints) {
+        let query;
+        for (let cidx in this.constraints) {
+            query = this.constraints[cidx];
             if (!query.type)
               continue
             if (!query.constraint) {
@@ -138,6 +159,7 @@
         this.next_offset = 0;
         this.relation_order = null;
         this.relation_lookup = null;
+        this.pushHistory();
         return await this.search()
       },
 
@@ -160,7 +182,7 @@
         let mesh_ids = [];
         let paper_ids = [];
         for (let idx in this.constraints) {
-          window.console.log(idx);
+          window.console.log(`Processing constraint ${idx}`);
           let constraint = this.constraints[idx];
           if (constraint.type === null)
             continue;
@@ -253,6 +275,54 @@
         return true;
       },
 
+      pushHistory: function() {
+        // Handle case where we've gone back.
+        if (this.history_idx !== this.search_history.length)
+          this.search_history = this.search_history.slice(0, this.history_idx+1);
+
+        // Push the latest constraint to the end of the history.
+        this.search_history.push({constraints: this.deepCopy(this.constraints)});
+        this.history_idx += 1;
+      },
+
+      backButton: async function() {
+        if (this.cannotGoBack)
+          return;
+        this.history_idx -= 1;
+        this.constraints = this.search_history[this.history_idx].constraints;
+        this.next_offset = 0;
+        this.relation_order = null;
+        this.relation_lookup = null;
+        return await this.search();
+      },
+
+      forwardButton: async function() {
+        if (this.cannotGoForward)
+          return;
+        this.history_idx += 1;
+        this.constraints = this.search_history[this.history_idx].constraints;
+        this.next_offset = 0;
+        this.relation_order = null;
+        this.relation_lookup = null;
+        return await this.search();
+      },
+
+      deepCopy: function(inObject) {
+        let outObject, value, key;
+
+        if (typeof inObject !== 'object' || inObject === null)
+          return inObject;
+
+        outObject = Array.isArray(inObject) ? [] : {};
+
+        for (key in inObject) {
+          value = inObject[key];
+          outObject[key] = this.deepCopy(value);
+        }
+
+        return outObject;
+      },
+
       getMore: async function() {
         return await this.search()
       }
@@ -269,6 +339,14 @@
       base_list: function() {
         return this.relation_order;
       },
+
+      cannotGoBack: function() {
+        return this.history_idx <= 0;
+      },
+
+      cannotGoForward: function() {
+       return this.history_idx >= (this.search_history.length - 1);
+      }
     },
     created: function() {
       this.addConstraint('HasAgent');
@@ -291,5 +369,10 @@
   }
   .spaced {
     margin: 0 0.5em;
+  }
+
+  .nav-btn {
+    margin-top: auto;
+    margin-bottom: auto;
   }
 </style>
