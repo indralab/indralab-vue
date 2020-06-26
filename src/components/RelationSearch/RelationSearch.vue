@@ -285,6 +285,10 @@
   .click {
     cursor: pointer;
   }
+
+  select, input, button {
+    margin: 0.2em;
+  }
   .spaced {
     margin: 0 0.5em;
   }
