@@ -96,7 +96,8 @@
     data: function() {
       return {
         new_const_type: null,
-        constraints: [],
+        constraints: {},
+        cidx: 0,
         constraint_types: {
           agent: 'HasAgent',
           type: 'HasType',
@@ -113,17 +114,16 @@
     },
     methods: {
       addConstraint: function(constraint_type) {
-        this.constraints.push({type: constraint_type, constraint: null, inverted: false})
+        this.$set(this.constraints, this.cidx, {
+          type: constraint_type,
+          constraint: null,
+          inverted: false
+        });
+        this.cidx ++;
       },
 
-      removeConstraint: function(agent_idx) {
-        const new_constraints = [];
-        this.constraints.forEach( (entry, idx) => {
-          if (idx === agent_idx)
-            return;
-          new_constraints.push(entry);
-        });
-        this.constraints = new_constraints;
+      removeConstraint: function(constraint_idx) {
+        this.$delete(this.constraints, constraint_idx)
       },
 
       searchButton: async function() {
