@@ -35,6 +35,12 @@
             <span v-else-if="constraint.type === 'HasType'">
               <b>Type:</b><type-select v-model="constraint.constraint"></type-select>
             </span>
+            <span v-else-if="constraint.type === 'FromMeshId'">
+              <b>Mesh:</b><mesh-select v-model="constraint.constraint"></mesh-select>
+            </span>
+            <span v-else>
+              <b style="color: red;">Developer error: unhandled constraint type.</b>
+            </span>
           </span>
         </div>
         <button class="btn btn-primary"
@@ -88,7 +94,7 @@
       return {
         new_const_type: null,
         constraints: [],
-        constraint_types: {agent: 'HasAgent', type: 'HasType'},
+        constraint_types: {agent: 'HasAgent', type: 'HasType', mesh: 'FromMeshId'},
         relation_order: null,
         relation_lookup: null,
         show_search: true,
@@ -143,6 +149,7 @@
 
         // Format the constraints into the query.
         let tagged_ag, agent_id, namespace, role;
+        let mesh_ids = [];
         for (let idx in this.constraints) {
           window.console.log(idx);
           let constraint = this.constraints[idx];
@@ -163,9 +170,13 @@
           } else if (constraint.type === 'HasType') {
             // Handle type constraints
             query_strs.push(`type=${constraint.constraint.stmt_types[0]}`);
+          } else if (constraint.type === 'FromMeshId') {
+            mesh_ids.push(constraint.constraint.mesh_id);
           }
-
         }
+
+        if (mesh_ids.length)
+          query_strs.push(`mesh_ids=${mesh_ids.join(',')}`)
 
         query_strs.push('limit=50');
         query_strs.push(`offset=${this.next_offset}`);
