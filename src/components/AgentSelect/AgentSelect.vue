@@ -43,6 +43,7 @@
         </i>
       </span>
       <span v-else-if="options.length === 1">
+        <span class="label">GILDA grounding:</span>
         <span class='form-control' v-html="printOption(options[0])"></span>
         <button class="btn btn-primary"
                 @click='resetOptions'>
