@@ -88,7 +88,7 @@
     </div>
     <div id='result-box' class='nvm' v-show='relation_order !== null'>
       <hr>
-      <h3>Results</h3>
+      <h4>Here are your results for statements that {{ query_string }}:</h4>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
       <span v-for="rel_id in list_shown" :key="rel_id">
@@ -125,6 +125,7 @@
         relation_lookup: null,
         show_search: true,
         searching: false,
+        query_string: null,
         next_offset: 0,
         search_error: null,
         search_history: [],
@@ -236,6 +237,8 @@
         // Unpackage the result.
         const resp_json = await resp.json();
         window.console.log(resp_json);
+
+        this.query_string = resp_json.query_str;
 
         // Update the container values
         if (this.relation_order == null) {
