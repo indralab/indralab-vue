@@ -140,7 +140,7 @@
 
         // Handle the agent part of the query.
         if (this.agent_str)
-          if (!this.options)
+          if (!this.options) {
             if (this.namespace !== 'other')
               ret = {
                 agent_id: this.agent_str,
@@ -151,13 +151,13 @@
                 agent_id: this.agent_str,
                 namespace: this.custom_namespace.toUpperCase(),
               };
-          else
+          } else {
             if (this.selected_option_idx >= 0)
               ret = {
                 agent_id: this.options[this.selected_option_idx].term.id,
                 namespace: this.options[this.selected_option_idx].term.db,
               };
-
+          }
         // Handle the role part.
         if (ret !== null)
           ret.role = this.role_str;
