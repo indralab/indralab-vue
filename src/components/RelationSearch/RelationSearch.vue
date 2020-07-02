@@ -91,6 +91,7 @@
       <h4>Here are your results for statements that {{ query_string }}:</h4>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
+      <span v-show="!empty_relations"><source-display></source-display></span>
       <span v-for="rel_id in list_shown" :key="rel_id">
         <relation v-bind="relation_lookup[rel_id]"></relation>
       </span>
