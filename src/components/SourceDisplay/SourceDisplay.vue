@@ -57,6 +57,6 @@
 
 <style scoped>
   .label {
-    margin: 0.1em;
+    margin: 1px;
   }
 </style>
