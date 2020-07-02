@@ -43,7 +43,7 @@
             <span v-else-if="constraint.type === 'HasType'">
               <b>Type:</b><type-select v-model="constraint.constraint"></type-select>
             </span>
-            <span v-else-if="constraint.type === 'FromMeshId'">
+            <span v-else-if="constraint.type === 'FromMeshIds'">
               <b>Mesh:</b><mesh-select v-model="constraint.constraint"></mesh-select>
             </span>
             <span v-else-if="constraint.type === 'FromPapers'">
@@ -118,7 +118,7 @@
         constraint_types: {
           agent: 'HasAgent',
           type: 'HasType',
-          mesh: 'FromMeshId',
+          mesh: 'FromMeshIds',
           paper: 'FromPapers'
         },
         relation_order: null,
@@ -202,7 +202,7 @@
           } else if (constraint.type === 'HasType') {
             // Handle type constraints
             query_strs.push(`type=${constraint.constraint.stmt_types[0]}`);
-          } else if (constraint.type === 'FromMeshId') {
+          } else if (constraint.type === 'FromMeshIds') {
             mesh_ids.push(constraint.constraint.mesh_id);
           } else if (constraint.type === 'FromPapers') {
             let paper_info =  constraint.constraint.paper_list[0];
@@ -349,7 +349,7 @@
 
       cannotGoForward: function() {
        return this.history_idx >= (this.search_history.length - 1);
-      }
+      },
     },
     created: function() {
       this.addConstraint('HasAgent');
