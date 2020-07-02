@@ -1,17 +1,24 @@
 <template>
   <div class='relation-search nvm'
        :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
-    <div class="row" id="search-row"
+    <div id="search-row"
          v-show='show_search'>
-      <div class="col-1 text-left nav-btn">
-        <button class="btn"
-                :disabled="cannotGoBack"
-                @click="backButton">
-          &lt; Back
-        </button>
+      <div class="nav-btn">
+        <h4>
+          Constraint your query
+          <button class="btn"
+                  :disabled="cannotGoBack"
+                  @click="backButton">
+            &lt; Back
+          </button>
+          <button class="btn"
+                  :disabled="cannotGoForward"
+                  @click="forwardButton">
+            Forward &gt;
+          </button>
+        </h4>
       </div>
-      <div class='col-10' id='seach-box'>
-        <h3>Constrain your query</h3>
+      <div id='seach-box'>
         <div class="form-inline"
              v-for="(constraint, const_idx) in constraints"
              :key='const_idx'>
@@ -66,13 +73,6 @@
             Hide Search Form
           </button>
         </div>
-      </div>
-      <div class="col-1 text-right nav-btn">
-        <button class="btn"
-                :disabled="cannotGoForward"
-                @click="forwardButton">
-          Forward &gt;
-        </button>
       </div>
     </div>
     <div v-show='!show_search'>
