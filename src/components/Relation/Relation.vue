@@ -21,7 +21,7 @@
     </div>
     <div class="row stmt_list" v-show="show_stmts">
       <div class="col">
-        <div class="container">
+        <div class="container right-bar">
           <statement v-for="(stmt, hash) in stmts"
                      :key="hash"
                      :english="stmt.english"
@@ -133,5 +133,8 @@
   }
   .header:hover {
     background-color: #e0e0e9;
+  }
+  .right-bar {
+    border-right: #0d5aa7 solid 1px;
   }
 </style>
