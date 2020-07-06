@@ -93,6 +93,7 @@
       <h4 v-show='empty_relations'>Nothing found.</h4>
       <div class="text-center" v-show="!empty_relations">
         db <source-display></source-display> rd
+        <hr>
       </div>
       <span v-for="rel_id in list_shown" :key="rel_id">
         <relation v-bind="relation_lookup[rel_id]"></relation>
