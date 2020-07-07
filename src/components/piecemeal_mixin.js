@@ -112,10 +112,11 @@ const piecemeal_mixin = {
             if (old_list === new_list)
                 return;
 
-            if (this.autoload)
-                this.end_n = 10;
-            else
-                this.end_n = 0;
+            if (!this.end_n)
+                if (this.autoload)
+                    this.end_n = 10;
+                else
+                    this.end_n = 0;
             this.bottom = false;
 
             this.loadMore().then();
