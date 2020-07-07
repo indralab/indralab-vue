@@ -5,7 +5,7 @@
          v-show='show_search'>
       <div class="nav-btn">
         <h4>
-          Constraint your query
+          Query Constraints
           <button class="btn"
                   :disabled="cannotGoBack"
                   @click="backButton">
@@ -88,7 +88,8 @@
     </div>
     <div id='result-box' class='nvm' v-show='relation_order !== null'>
       <hr>
-      <h4>Here are your results for statements that {{ query_string }}:</h4>
+      <h4>Results</h4>
+      <small>I found statements that {{ query_string }}</small>
       <hr>
       <h4 v-show='empty_relations'>Nothing found.</h4>
       <div class="text-center" v-show="!empty_relations">
