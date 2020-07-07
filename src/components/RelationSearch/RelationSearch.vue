@@ -68,7 +68,7 @@
             Search
           </button>
           <button class="btn btn-outline-primary"
-                  v-show="relation_order !== null && !empty_relations"
+                  v-show="!empty_relations"
                   @click="show_search=false">
             Hide Search Form
           </button>
@@ -86,18 +86,18 @@
       <hr>
       <i style="color: red">Failed to load search results: {{ search_error }}.</i>
     </div>
-    <div id='result-box' class='nvm' v-show='relation_order !== null'>
+    <div id='result-box' class='nvm' v-show='!empty_relations'>
       <hr>
       <h4>Results</h4>
       <small>I found statements that {{ query_string }}</small>
       <hr>
-      <h4 v-show='empty_relations'>Nothing found.</h4>
+      <h4 v-show='empty_relations & search_history'>Nothing found.</h4>
       <div class="text-center" v-show="!empty_relations">
         db <source-display></source-display> rd
         <hr>
       </div>
-      <span v-for="rel_id in list_shown" :key="rel_id">
-        <relation v-bind="relation_lookup[rel_id]"></relation>
+      <span v-for="agent_pair in list_shown" :key="agent_pair.id">
+        <agent-pair v-bind="agent_pair"></agent-pair>
       </span>
       <span v-show="searching">Loading...</span>
     </div>
@@ -126,8 +126,7 @@
           mesh: 'FromMeshIds',
           paper: 'FromPapers'
         },
-        relation_order: null,
-        relation_lookup: null,
+        agent_pairs: null,
         show_search: true,
         searching: false,
         query_string: null,
@@ -163,8 +162,7 @@
             }
         }
         this.next_offset = 0;
-        this.relation_order = null;
-        this.relation_lookup = null;
+        this.agent_pairs = null;
         this.pushHistory();
         return await this.search()
       },
@@ -228,7 +226,7 @@
         window.console.log(query_strs);
 
         // Make the query
-        let url = this.$relation_url + '?' + query_strs.join('&');
+        let url = this.$agent_url + '?' + query_strs.join('&');
         window.console.log(url);
         const resp = await fetch(url);
 
@@ -245,39 +243,14 @@
         window.console.log(resp_json);
 
         this.query_string = resp_json.query_str;
-
-        // Update the container values
-        if (this.relation_order == null) {
-          this.relation_order = [];
-          this.relation_lookup = {};
-        }
-        resp_json.relations.forEach(rel => {
-          if (!(rel.id in this.relation_lookup)) {
-            // Add a new entry if this is new.
-            rel.hashes = undefined;  // take up less space.
-            this.relation_lookup[rel.id] = rel;
-            this.relation_order.push(rel.id);
-          } else {
-            // Otherwise update the source counts.
-            //   Note that you need to create a new source count dict and replace
-            //   the old one rather than update the old one in place so that Vue
-            //   detects the change and updates the display.
-            let cnt;
-            let new_src_counts = {};
-            let old_src_counts = this.relation_lookup[rel.id].source_counts;
-            for (let src_group of Object.values(this.$sources))
-              for (let src of src_group) {
-                cnt = (rel.source_counts[src] || 0) + (old_src_counts[src] || 0);
-                if (cnt > 0)
-                  new_src_counts[src] = cnt;
-              }
-            this.relation_lookup[rel.id].source_counts = new_src_counts;
-          }
-        });
+        if (!this.agent_pairs)
+          this.agent_pairs = resp_json.relations
+        else
+          this.agent_pairs = [...this.agent_pairs, ...resp_json.relations]
         this.next_offset = resp_json.next_offset;
 
         // Decide whether to close the search box or not.
-        if (this.relation_order.length > 0)
+        if (this.agent_pairs.length > 0)
           this.show_search = false;
 
         this.searching = false;
@@ -300,8 +273,7 @@
         this.history_idx -= 1;
         this.constraints = this.search_history[this.history_idx].constraints;
         this.next_offset = 0;
-        this.relation_order = null;
-        this.relation_lookup = null;
+        this.agent_pairs = null;
         return await this.search();
       },
 
@@ -311,8 +283,7 @@
         this.history_idx += 1;
         this.constraints = this.search_history[this.history_idx].constraints;
         this.next_offset = 0;
-        this.relation_order = null;
-        this.relation_lookup = null;
+        this.agent_pairs = null;
         return await this.search();
       },
 
@@ -338,15 +309,13 @@
     },
     computed: {
       empty_relations: function() {
-        if (this.relation_order == null)
-          return false;
-        if (this.relation_order.length === 0)
+        if (this.agent_pairs === null)
           return true;
-        return false
+        return (this.agent_pairs.length === 0);
       },
 
       base_list: function() {
-        return this.relation_order;
+        return this.agent_pairs;
       },
 
       cannotGoBack: function() {
