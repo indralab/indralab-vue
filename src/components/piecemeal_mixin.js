@@ -103,7 +103,7 @@ const piecemeal_mixin = {
     watch: {
         bottom: function(bottom) {
             if (bottom) {
-                this.loadMore();
+                this.loadMore().then();
             }
         },
 
@@ -118,7 +118,7 @@ const piecemeal_mixin = {
                 this.end_n = 0;
             this.bottom = false;
 
-            this.loadMore();
+            this.loadMore().then();
         }
     }
 };
