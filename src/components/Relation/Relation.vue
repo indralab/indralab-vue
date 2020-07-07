@@ -4,13 +4,13 @@
          :style="`cursor: ${(searching) ? 'progress': 'pointer'};`"
          @click="toggleStmts">
       <div class='col text-left'>
-        <h4>
+        <h5>
           <span v-html="english"></span>
           <small v-if='cur_count'
                  class='badge badge-success badge-pill'>
             &#9998; {{ cur_count }}
           </small>
-        </h4>
+        </h5>
       </div>
       <div class="col-auto text-right">
         <source-display :source_counts="source_counts"></source-display>

@@ -2,7 +2,7 @@
   <div class="statement">
     <div class="row clickable" @click="toggleList">
       <div class="col text-left">
-        <h4>
+        <h5>
           <span v-html='english'></span>
           <small v-for='badge in displayed_badges'
                 :class="`badge badge-pill float-${badge.loc}`"
@@ -15,7 +15,7 @@
                     {{ badge.symbol }}{{ badge.num }}</a>
               <span v-else>{{ badge.symbol }}{{ badge.num }}</span>
           </small>
-        </h4>
+        </h5>
       </div>
       <div class="col-auto text-right" v-if="sources">
         <source-display :source_counts="sources"></source-display>
