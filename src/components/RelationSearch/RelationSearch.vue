@@ -92,13 +92,15 @@
       <small>I found statements that {{ query_string }}</small>
       <hr>
       <h4 v-show='empty_relations & search_history'>Nothing found.</h4>
-      <div class="text-center" v-show="!empty_relations">
+      <div class="text-center sticky-header" v-show="!empty_relations">
         db <source-display></source-display> rd
-        <hr>
+        <hr id="src-disp-hr">
       </div>
-      <span v-for="agent_pair in list_shown" :key="agent_pair.id">
-        <agent-pair v-bind="agent_pair"></agent-pair>
-      </span>
+      <div id="result-list">
+        <span v-for="agent_pair in list_shown" :key="agent_pair.id">
+          <agent-pair v-bind="agent_pair"></agent-pair>
+        </span>
+      </div>
       <span v-show="searching">Loading...</span>
     </div>
   </div>
@@ -352,5 +354,25 @@
   .nav-btn {
     margin-top: auto;
     margin-bottom: auto;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    padding: 5px 20px 0 20px;
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  #src-disp-hr {
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+
+  #result-list {
+    margin-top: 10px;
   }
 </style>
