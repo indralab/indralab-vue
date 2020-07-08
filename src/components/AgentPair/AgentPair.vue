@@ -32,14 +32,6 @@
 </template>
 
 <script>
-  const snowflakes = [
-    'Complex',
-    'Translocation',
-    'ActiveForm',
-    'Conversion',
-    'Autophosphorylation'
-  ];
-
   export default {
     name: "AgentPair",
     props: {
@@ -81,10 +73,7 @@
         let tagged_ag;
         for (let [idx, ag] of Object.entries(this.agents)) {
           tagged_ag = encodeURIComponent(`${ag}@NAME`);
-          if (snowflakes.includes(this.type))
-            query_strs.push(`agent${idx}=${tagged_ag}`);
-          else
-            query_strs.push(`${['subject', 'object'][idx]}=${tagged_ag}`);
+          query_strs.push(`ag_num_${idx}=${tagged_ag}`);
         }
 
         query_strs.push("max_stmts=50");
@@ -93,7 +82,9 @@
         query_strs.push("with_cur_counts=true");
         query_strs.push("strict=true");
 
-        const resp = await fetch(this.$relation_url + '?' + query_strs.join('&'));
+        let query_str = query_strs.join('&')
+        window.console.log(query_str)
+        const resp = await fetch(this.$relation_url + '?' + query_str);
         let success = true;
         if (resp.status === 200) {
           const resp_json = await resp.json();
