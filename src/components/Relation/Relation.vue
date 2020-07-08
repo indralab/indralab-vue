@@ -31,6 +31,7 @@
                      :num_curations="cur_counts[hash]"
                      :evidence="stmt.evidence"
                      :total_evidence="evidence_totals[hash]"
+                     :context_queries="context_queries"
                      :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>
       </div>
@@ -49,7 +50,8 @@
       cur_count: {
         type: Number,
         default: 0
-      }
+      },
+      context_queries: Array,
     },
     data: function() {
       return {
@@ -92,8 +94,9 @@
         query_strs.push("with_english=true");
         query_strs.push("with_cur_counts=true");
         query_strs.push("strict=true");
+        query_strs.push("filter_ev=true");
 
-        let query_str = query_strs.join('&')
+        let query_str = [...query_strs, ...this.context_queries].join('&')
         window.console.log(query_str)
         const resp = await fetch(this.$stmt_url + '?' + query_str);
         let success = true;

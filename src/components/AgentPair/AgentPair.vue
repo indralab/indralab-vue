@@ -23,7 +23,7 @@
       <div class="col">
         <div class="container right-bar">
           <span v-for="relation in relations" :key="relation.id">
-            <relation v-bind="relation"></relation>
+            <relation v-bind="relation" :context_queries="context_queries"></relation>
           </span>
         </div>
       </div>
@@ -41,7 +41,8 @@
       cur_count: {
         type: Number,
         default: 0
-      }
+      },
+      context_queries: Array,
     },
     data: function() {
       return {
@@ -82,7 +83,7 @@
         query_strs.push("with_cur_counts=true");
         query_strs.push("strict=true");
 
-        let query_str = query_strs.join('&')
+        let query_str = [...query_strs, ...this.context_queries].join('&')
         window.console.log(query_str)
         const resp = await fetch(this.$relation_url + '?' + query_str);
         let success = true;

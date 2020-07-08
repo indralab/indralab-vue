@@ -62,6 +62,7 @@
       hash: String,
       sources: Object,
       total_evidence: Number,
+      context_queries: Array,
       num_curations: {
         type: Number,
         default: null
@@ -109,7 +110,9 @@
         let params = [
           'format=json-js',
           'with_english=true',
-          'with_cur_counts=true'
+          'with_cur_counts=true',
+          'filter_ev=true',
+          ...this.context_queries
         ];
 
         const resp = await fetch(this.evidence_url + this.hash

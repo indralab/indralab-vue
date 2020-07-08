@@ -98,7 +98,7 @@
       </div>
       <div id="result-list">
         <span v-for="agent_pair in list_shown" :key="agent_pair.id">
-          <agent-pair v-bind="agent_pair"></agent-pair>
+          <agent-pair v-bind="agent_pair" :context_queries="context_queries"></agent-pair>
         </span>
       </div>
       <span v-show="searching">Loading...</span>
@@ -128,6 +128,7 @@
           mesh: 'FromMeshIds',
           paper: 'FromPapers'
         },
+        context_queries: null,
         agent_pairs: null,
         show_search: true,
         searching: false,
@@ -182,6 +183,7 @@
 
         this.searching = true;
         let query_strs = [];
+        this.context_queries = [];
 
         // Format the constraints into the query.
         let tagged_ag, agent_id, namespace, role;
@@ -206,7 +208,9 @@
               query_strs.push(`${role}=${tagged_ag}`);
           } else if (constraint.type === 'HasType') {
             // Handle type constraints
-            query_strs.push(`type=${constraint.constraint.stmt_types[0]}`);
+            this.context_queries.push(
+              `type=${constraint.constraint.stmt_types[0]}`
+            );
           } else if (constraint.type === 'FromMeshIds') {
             mesh_ids.push(constraint.constraint.mesh_id);
           } else if (constraint.type === 'FromPapers') {
@@ -216,19 +220,20 @@
         }
 
         if (mesh_ids.length)
-          query_strs.push(`mesh_ids=${mesh_ids.join(',')}`)
+          this.context_queries.push(`mesh_ids=${mesh_ids.join(',')}`);
 
         if (paper_ids.length)
-          query_strs.push(`paper_ids=${paper_ids.join(',')}`)
+          this.context_queries.push(`paper_ids=${paper_ids.join(',')}`);
 
         query_strs.push('max_stmts=50');
         query_strs.push(`offset=${this.next_offset}`);
         query_strs.push('with_cur_counts=true');
         query_strs.push('with_english=true');
         window.console.log(query_strs);
+        window.console.log(this.context_queries)
 
         // Make the query
-        let url = this.$agent_url + '?' + query_strs.join('&');
+        let url = this.$agent_url + '?' + [...query_strs, ...this.context_queries].join('&');
         window.console.log(url);
         const resp = await fetch(url);
 
