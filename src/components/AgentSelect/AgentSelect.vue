@@ -140,7 +140,7 @@
 
         // Handle the agent part of the query.
         if (this.agent_str)
-          if (!this.options) {
+          if (!this.options || this.options_empty) {
             if (this.namespace !== 'other')
               ret = {
                 agent_id: this.agent_str,
