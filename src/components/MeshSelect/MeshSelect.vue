@@ -106,7 +106,7 @@
         let ret = null;
         if (this.mesh_str)
           if (!this.options)
-            ret = {mesh_id: this.mesh_id};
+            ret = {mesh_id: this.mesh_str};
           else if (this.selected_option_idx >= 0)
             ret = {mesh_id: this.options[this.selected_option_idx].term.id};
         return ret;
