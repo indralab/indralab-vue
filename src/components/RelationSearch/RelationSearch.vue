@@ -86,7 +86,7 @@
       <hr>
       <i style="color: red">Failed to load search results: {{ search_error }}.</i>
     </div>
-    <div id='result-box' class='nvm' v-show='!empty_relations'>
+    <div id='result-box' class='nvm' v-if='!empty_relations'>
       <hr>
       <h4>Results</h4>
       <small>I found statements that {{ query_string }}</small>
@@ -102,6 +102,9 @@
         </span>
       </div>
       <span v-show="searching">Loading...</span>
+    </div>
+    <div v-else>
+      No results found.
     </div>
   </div>
 </template>
@@ -230,7 +233,7 @@
         query_strs.push('with_cur_counts=true');
         query_strs.push('with_english=true');
         window.console.log(query_strs);
-        window.console.log(this.context_queries)
+        window.console.log(this.context_queries);
 
         // Make the query
         let url = this.$agent_url + '?' + [...query_strs, ...this.context_queries].join('&');
