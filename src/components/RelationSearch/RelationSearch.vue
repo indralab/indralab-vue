@@ -103,7 +103,7 @@
       </div>
       <span v-show="searching">Loading...</span>
     </div>
-    <div v-else>
+    <div v-else-if="agent_pairs !== null">
       No results found.
     </div>
   </div>
