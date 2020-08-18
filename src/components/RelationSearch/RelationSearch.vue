@@ -187,9 +187,9 @@
 
           if (constraint.type === 'HasAgent') {
             // Handle agent constraints
-            agent_id = constraint.constraint.agent_id;
-            namespace = constraint.constraint.namespace;
-            role = constraint.constraint.role;
+            agent_id = constraint.constraint.agent_id.trim();
+            namespace = constraint.constraint.namespace.trim();
+            role = constraint.constraint.role.trim();
 
             tagged_ag = encodeURIComponent(agent_id + '@' + namespace);
             if (role === 'any')
