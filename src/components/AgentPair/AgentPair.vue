@@ -43,15 +43,13 @@
         default: 0
       },
       context_queries: Array,
+      hashes: Array,
     },
     data: function() {
       return {
         show_relations: false,
         relations: null,
-        stmt_source_counts: null,
         searching: false,
-        next_offset: 0,
-        cur_counts: null,
         evidence_totals: null,
         search_failed: null,
       }
@@ -70,31 +68,29 @@
         window.console.log("Getting relations.");
         this.searching = true;
 
+        let query_data = {
+          agent_json: this.agents,
+          hashes: this.hashes,
+        };
+
         let query_strs = [];
-        let tagged_ag;
-        for (let [idx, ag] of Object.entries(this.agents)) {
-          tagged_ag = encodeURIComponent(`${ag}@NAME`);
-          query_strs.push(`ag_num_${idx}=${tagged_ag}`);
-        }
-
-        query_strs.push("max_stmts=50");
-        query_strs.push(`offset=${this.next_offset}`);
-        query_strs.push("with_english=true");
         query_strs.push("with_cur_counts=true");
-        query_strs.push("strict=true");
 
-        let query_str = [...query_strs, ...this.context_queries].join('&')
+        let query_str = query_strs.join('&')
         window.console.log(query_str)
-        const resp = await fetch(this.$relation_url + '?' + query_str);
+        const resp = await fetch(
+          this.$relation_url + '?' + query_str,
+          {
+            method: 'POST',
+            body: JSON.stringify(query_data),
+            headers: {'Content-Type': 'application/json'}
+        });
         let success = true;
         if (resp.status === 200) {
           const resp_json = await resp.json();
           window.console.log(resp_json);
 
           this.relations = resp_json.results;
-          this.stmt_source_counts = resp_json.source_counts;
-          this.next_offset = resp_json.offset + resp_json.statements_returned;
-          this.cur_counts = resp_json.num_curations;
           this.evidence_totals = resp_json.evidence_totals;
           this.search_failed = null;
         } else {
