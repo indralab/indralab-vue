@@ -215,10 +215,11 @@
         if (paper_ids.length)
           this.context_queries.push(`paper_ids=${paper_ids.join(',')}`);
 
-        query_strs.push('max_stmts=50');
+        query_strs.push('limit=50');
         query_strs.push(`offset=${this.next_offset}`);
         query_strs.push('with_cur_counts=true');
         query_strs.push('with_english=true');
+        query_strs.push('with_hashes=true')
         window.console.log(query_strs);
         window.console.log(this.context_queries);
 
