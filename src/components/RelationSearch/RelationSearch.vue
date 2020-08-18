@@ -1,8 +1,7 @@
 <template>
   <div class='relation-search nvm'
        :style="`cursor: ${(searching) ? 'progress': 'auto'};`">
-    <div id="search-row"
-         v-show='show_search'>
+    <div id="search-row">
       <div class="nav-btn">
         <h4>
           Query Constraints
@@ -67,20 +66,8 @@
                   :disabled="searching">
             Search
           </button>
-          <button class="btn btn-outline-primary"
-                  v-show="!empty_relations"
-                  @click="show_search=false">
-            Hide Search Form
-          </button>
         </div>
       </div>
-    </div>
-    <div v-show='!show_search'>
-      <button class="btn btn-primary"
-              id='search-reopen'
-              @click='show_search=true'>
-          Edit Search Form
-      </button>
     </div>
     <div id="error-box" class="nvm" v-show="search_error">
       <hr>
