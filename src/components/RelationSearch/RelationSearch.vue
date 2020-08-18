@@ -219,7 +219,8 @@
         query_strs.push(`offset=${this.next_offset}`);
         query_strs.push('with_cur_counts=true');
         query_strs.push('with_english=true');
-        query_strs.push('with_hashes=true')
+        query_strs.push('with_hashes=true');
+        query_strs.push('format=json-js');
         window.console.log(query_strs);
         window.console.log(this.context_queries);
 
