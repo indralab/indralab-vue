@@ -83,7 +83,7 @@
           agent_json: this.agents,
           hashes: this.hashes,
           stmt_type: this.type
-        }
+        };
 
         let query_strs = [];
         query_strs.push("ev_limit=10");
@@ -92,8 +92,10 @@
         query_strs.push("with_cur_counts=true");
         query_strs.push("filter_ev=true");
 
-        let query_str = [...query_strs, ...this.context_queries].join('&')
-        window.console.log(query_str)
+        let query_str = [...query_strs, ...this.context_queries].join('&');
+        window.console.log(this.$stmt_url);
+        window.console.log(query_str);
+        window.console.log(query_data);
         const resp = await fetch(
           this.$stmt_url + '?' + query_str,
           {

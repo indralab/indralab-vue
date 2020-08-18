@@ -76,8 +76,10 @@
         let query_strs = [];
         query_strs.push("with_cur_counts=true");
 
-        let query_str = query_strs.join('&')
-        window.console.log(query_str)
+        let query_str = query_strs.join('&');
+        window.console.log(this.$relation_url);
+        window.console.log(query_str);
+        window.console.log(query_data);
         const resp = await fetch(
           this.$relation_url + '?' + query_str,
           {
@@ -90,7 +92,7 @@
           const resp_json = await resp.json();
           window.console.log(resp_json);
 
-          this.relations = resp_json.results;
+          this.relations = resp_json.relations;
           this.evidence_totals = resp_json.evidence_totals;
           this.search_failed = null;
         } else {
