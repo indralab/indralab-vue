@@ -22,9 +22,21 @@
     <div class="row stmt_list" v-show="show_relations">
       <div class="col">
         <div class="container right-bar">
-          <span v-for="relation in relations" :key="relation.id">
+          <span v-for="relation in list_shown" :key="relation.id">
             <relation v-bind="relation" :context_queries="context_queries"></relation>
           </span>
+          <div class='text-center clickable'
+               :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+               v-show='show_buttons'
+               @click='loadMore'>
+            Load {{ next_batch }} more...
+          </div>
+          <div class='text-center clickable'
+               :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+               v-show='show_buttons'
+               @click='loadAll'>
+            Load all {{ base_list ? base_list.length : 0 - end_n }} remaining...
+          </div>
         </div>
       </div>
     </div>
@@ -32,6 +44,8 @@
 </template>
 
 <script>
+  import piecemeal_mixin from '../piecemeal_mixin'
+
   export default {
     name: "AgentPair",
     props: {
@@ -103,6 +117,12 @@
         return success;
       }
     },
+    computed: {
+      base_list: function() {
+        return this.relations;
+      }
+    },
+    mixins: [piecemeal_mixin]
   }
 </script>
 

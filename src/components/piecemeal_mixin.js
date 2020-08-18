@@ -19,7 +19,10 @@ const piecemeal_mixin = {
     },
     created: function() {
         if (!this.autoload) {
-            this.end_n = 10;
+            if (!this.base_list)
+                this.end_n = 0
+            else
+                this.end_n = 10;
             return;
         }
         window.console.log("Adding event listener to scroll.");
@@ -38,7 +41,12 @@ const piecemeal_mixin = {
             return this.base_list.slice(0, this.end_n);
         },
         next_batch: function() {
-            return Math.min(this.base_list.length - this.end_n, this.dn);
+            let L;
+            if (this.base_list != null)
+                L = this.base_list.length;
+            else
+                L = 0
+            return Math.min(L - this.end_n, this.dn);
         },
         show_buttons: function() {
             return this.next_batch > 0;
@@ -85,6 +93,10 @@ const piecemeal_mixin = {
         },
 
         loadAll: function() {
+            if (!this.base_list) {
+                this.end_n = 0
+                return;
+            }
             this.end_n = this.base_list.length;
         },
 

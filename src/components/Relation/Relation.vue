@@ -22,7 +22,7 @@
     <div class="row stmt_list" v-show="show_stmts">
       <div class="col">
         <div class="container right-bar">
-          <statement v-for="(stmt, hash) in stmts"
+          <statement v-for="[hash, stmt] of list_shown"
                      :key="hash"
                      :english="stmt.english"
                      :hash="hash"
@@ -34,12 +34,26 @@
                      :context_queries="context_queries"
                      :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>
+        <div class='text-center clickable'
+             :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+             v-show='show_buttons'
+             @click='loadMore'>
+          Load {{ next_batch }} more...
+        </div>
+        <div class='text-center clickable'
+             :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+             v-show='show_buttons'
+             @click='loadAll'>
+          Load all {{(base_list ? base_list.length : 0) - end_n }} remaining...
+        </div>
       </div>
     </div>
   </span>
 </template>
 
 <script>
+  import piecemeal_mixin from "../piecemeal_mixin";
+
   export default {
     name: "Relation",
     props: {
@@ -121,6 +135,14 @@
         return success;
       }
     },
+    computed: {
+      base_list: function() {
+        if (!this.stmts)
+          return null;
+        return Object.entries(this.stmts);
+      }
+    },
+    mixins: [piecemeal_mixin]
   }
 </script>
 
