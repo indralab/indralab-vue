@@ -143,12 +143,12 @@
           if (!this.options || this.options_empty) {
             if (this.namespace !== 'other')
               ret = {
-                agent_id: this.agent_str,
+                agent_id: this.agent_id,
                 namespace: this.namespace.toUpperCase(),
               };
             else if (this.custom_namespace)
               ret = {
-                agent_id: this.agent_str,
+                agent_id: this.agent_id,
                 namespace: this.custom_namespace.toUpperCase(),
               };
           } else {
@@ -159,9 +159,12 @@
               };
           }
         // Handle the role part.
-        if (ret !== null)
+        if (ret !== null && this.role_str !== 'any')
           ret.role = this.role_str;
         return ret;
+      },
+      agent_id: function() {
+        return this.agent_str.trim();
       }
     },
     watch: {
