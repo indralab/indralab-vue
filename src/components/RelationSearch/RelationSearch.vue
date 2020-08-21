@@ -127,6 +127,7 @@
         search_error: null,
         search_history: [],
         history_idx: -1,
+        complexes_covered: null,
       }
     },
     methods: {
@@ -247,6 +248,7 @@
         else
           this.agent_pairs = [...this.agent_pairs, ...resp_json.relations]
         this.next_offset = resp_json.next_offset;
+        this.complexes_covered = resp_json.complexes_covered;
 
         // Decide whether to close the search box or not.
         if (this.agent_pairs.length > 0)
