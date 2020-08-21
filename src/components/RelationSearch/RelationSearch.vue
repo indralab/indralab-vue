@@ -21,17 +21,17 @@
         <div class="form-inline"
              v-for="(constraint, const_idx) in constraints"
              :key='const_idx'>
-          <span v-if="!constraint.type">
+          <span v-if="!constraint.class">
             <span class='spaced'>
                 &#10133;
             </span>
             <select class="form-control"
                     @input="addConstraint(null)"
-                    v-model="constraint.type">
+                    v-model="constraint.class">
               <option :value="null" selected hidden>
                 select constraint...
               </option>
-              <option v-for="(type_val, type_name) in constraint_types"
+              <option v-for="(type_val, type_name) in constraint_classes"
                       :key="type_name"
                       :value="type_val">
                 {{ type_name }} constraint
@@ -43,20 +43,20 @@
                   @click='removeConstraint(const_idx)'>
                 &#10005;
             </span>
-            <span v-if="constraint.type === 'HasAgent'">
+            <span v-if="constraint.class === 'HasAgent'">
               <b>Agent:</b><agent-select v-model="constraint.constraint"></agent-select>
             </span>
-            <span v-else-if="constraint.type === 'HasType'">
+            <span v-else-if="constraint.class === 'HasType'">
               <b>Type:</b><type-select v-model="constraint.constraint"></type-select>
             </span>
-            <span v-else-if="constraint.type === 'FromMeshIds'">
+            <span v-else-if="constraint.class === 'FromMeshIds'">
               <b>Mesh:</b><mesh-select v-model="constraint.constraint"></mesh-select>
             </span>
-            <span v-else-if="constraint.type === 'FromPapers'">
+            <span v-else-if="constraint.class === 'FromPapers'">
               <b>Paper:</b><paper-select v-model="constraint.constraint"></paper-select>
             </span>
             <span v-else>
-              <b style="color: red;">Developer error: unhandled constraint type.</b>
+              <b style="color: red;">Developer error: unhandled constraint.class.</b>
             </span>
           </span>
         </div>
@@ -112,7 +112,7 @@
         new_const_type: null,
         constraints: {},
         cidx: 0,
-        constraint_types: {
+        constraint_classes: {
           agent: 'HasAgent',
           type: 'HasType',
           mesh: 'FromMeshIds',
@@ -132,7 +132,7 @@
     methods: {
       addConstraint: function(constraint_type) {
         this.$set(this.constraints, this.cidx, {
-          type: constraint_type,
+          class: constraint_type,
           constraint: null,
           inverted: false
         });
@@ -147,10 +147,10 @@
         let query;
         for (let cidx in this.constraints) {
             query = this.constraints[cidx];
-            if (!query.type)
+            if (!query.class)
               continue
             if (!query.constraint) {
-                alert(`Please fill out ${query.type} form completely.`);
+                alert(`Please fill out ${query.class} form completely.`);
                 return;
             }
         }
@@ -176,44 +176,40 @@
         this.context_queries = [];
 
         // Format the constraints into the query.
-        let tagged_ag, agent_id, namespace, role;
-        let mesh_ids = [];
-        let paper_ids = [];
+        let query_jsons = [];
+        let cumulative_queries = {};
         for (let idx in this.constraints) {
           window.console.log(`Processing constraint ${idx}`);
-          let constraint = this.constraints[idx];
-          if (constraint.type === null)
-            continue;
-
-          if (constraint.type === 'HasAgent') {
-            // Handle agent constraints
-            agent_id = constraint.constraint.agent_id.trim();
-            namespace = constraint.constraint.namespace.trim();
-            role = constraint.constraint.role.trim();
-
-            tagged_ag = encodeURIComponent(agent_id + '@' + namespace);
-            if (role === 'any')
-              query_strs.push(`agent${idx}=${tagged_ag}`);
-            else
-              query_strs.push(`${role}=${tagged_ag}`);
-          } else if (constraint.type === 'HasType') {
-            // Handle type constraints
-            this.context_queries.push(
-              `type=${constraint.constraint.stmt_types[0]}`
-            );
-          } else if (constraint.type === 'FromMeshIds') {
-            mesh_ids.push(constraint.constraint.mesh_id);
-          } else if (constraint.type === 'FromPapers') {
-            let paper_info =  constraint.constraint.paper_list[0];
-            paper_ids.push(`${paper_info[1]}@${paper_info[0]}`);
+          let param = this.constraints[idx];
+          let constraint = param.constraint;
+          if (param.class === 'HasAgent')
+            query_jsons.push(constraint);
+          else {
+            for (let [class_name, list_name] of [
+              ['HasType', 'stmt_types'],
+              ['FromMeshIds', 'mesh_ids'],
+              ['FromPapers', 'paper_list']
+            ]) {
+              if (class_name in cumulative_queries)
+                cumulative_queries[class_name].constraint[list_name]
+                  .concat(constraint[list_name]);
+              else {
+                cumulative_queries[class_name] = constraint;
+                query_jsons.push(constraint);
+              }
+            }
           }
         }
 
-        if (mesh_ids.length)
-          this.context_queries.push(`mesh_ids=${mesh_ids.join(',')}`);
-
-        if (paper_ids.length)
-          this.context_queries.push(`paper_ids=${paper_ids.join(',')}`);
+        let query;
+        if (query_jsons.length === 1)
+          query = query_jsons[0];
+        else
+          query = {
+            class: 'Intersection',
+            constraint: {query_list: query_jsons},
+            inverted: false
+          }
 
         query_strs.push('limit=50');
         query_strs.push(`offset=${this.next_offset}`);
@@ -227,7 +223,11 @@
         // Make the query
         let url = this.$agent_url + '?' + [...query_strs, ...this.context_queries].join('&');
         window.console.log(url);
-        const resp = await fetch(url);
+        const resp = await fetch(url, {
+          method: 'POST',
+          data: JSON.stringify(query),
+          headers: {'Content-Type': 'application/json'}
+        });
 
         // Check that the query is good (exit if not)
         if (resp.status !== 200) {
