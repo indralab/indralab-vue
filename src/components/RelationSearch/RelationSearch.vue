@@ -184,8 +184,8 @@
           let param = this.constraints[idx];
           let constraint = param.constraint;
           if (param.class === 'HasAgent')
-            query_jsons.push(constraint);
-          else {
+            query_jsons.push(param);
+          else if (param.class !== null) {
             for (let [class_name, list_name] of [
               ['HasType', 'stmt_types'],
               ['FromMeshIds', 'mesh_ids'],
@@ -195,8 +195,8 @@
                 cumulative_queries[class_name].constraint[list_name]
                   .concat(constraint[list_name]);
               else {
-                cumulative_queries[class_name] = constraint;
-                query_jsons.push(constraint);
+                cumulative_queries[class_name] = param;
+                query_jsons.push(param);
               }
             }
           }
@@ -218,15 +218,20 @@
         query_strs.push('with_english=true');
         query_strs.push('with_hashes=true');
         query_strs.push('format=json-js');
-        window.console.log(query_strs);
-        window.console.log(this.context_queries);
+        let query_body = JSON.stringify({
+          query: query,
+          complexes_covered: this.complexes_covered
+        });
+        window.console.log(`Query params: ${query_strs}`);
+        window.console.log(`JSON query: ${query_body}`);
+        window.console.log(`Context queries: ${this.context_queries}`);
 
         // Make the query
         let url = this.$agent_url + '?' + [...query_strs, ...this.context_queries].join('&');
         window.console.log(url);
         const resp = await fetch(url, {
           method: 'POST',
-          data: JSON.stringify(query),
+          body: query_body,
           headers: {'Content-Type': 'application/json'}
         });
 
