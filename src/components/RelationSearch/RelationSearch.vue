@@ -26,8 +26,7 @@
                 &#10133;
             </span>
             <select class="form-control"
-                    @input="addConstraint(null)"
-                    v-model="constraint.class">
+                    @input="reactToConstraintSelection($event)">
               <option :value="null" selected hidden>
                 select constraint...
               </option>
@@ -131,13 +130,19 @@
       }
     },
     methods: {
-      addConstraint: function(constraint_type) {
+      addConstraint: function(constraint_class) {
         this.$set(this.constraints, this.cidx, {
-          class: constraint_type,
+          class: constraint_class,
           constraint: null,
           inverted: false
         });
         this.cidx ++;
+      },
+
+      reactToConstraintSelection: function(event) {
+        window.console.log(event);
+        this.$set(this.constraints[this.cidx - 1], 'class', event.target.value);
+        this.addConstraint(null);
       },
 
       removeConstraint: function(constraint_idx) {
