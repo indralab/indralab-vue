@@ -27,7 +27,7 @@ print(f"The following files will be pushed to 's3://{s3_path}' "
       f"(they will be PUBLIC):")
 for fname in os.listdir('dist'):
     print('\t', os.path.join('dist', fname))
-res = input("Continue (Y/n)?")
+res = input("Continue (Y/n)? ")
 
 if res.lower() != 'y' and res != '':
     print("Aborting.")
@@ -39,5 +39,8 @@ s3 = boto3.client('s3')
 for fname in os.listdir('dist'):
     fpath = os.path.join('dist', fname)
     print(f"Putting {fpath} -> s3://{s3_path}/{fname}")
+    extra_args = {'ACL': 'public-read'}
+    if fname.endswith('css'):
+        extra_args['ContentType'] = 'text/css'
     s3.upload_file(os.path.join('dist', fname), root['bucket'],
-                   f'{prefix}/{fname}', ExtraArgs={'ACL': 'public-read'})
+                   f'{prefix}/{fname}', ExtraArgs=extra_args)
