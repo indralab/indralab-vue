@@ -197,6 +197,8 @@
               ['FromMeshIds', 'mesh_ids'],
               ['FromPapers', 'paper_list']
             ]) {
+              if (class_name !== param.class)
+                continue
               if (class_name in cumulative_queries)
                 cumulative_queries[class_name].constraint[list_name]
                   .concat(constraint[list_name]);
