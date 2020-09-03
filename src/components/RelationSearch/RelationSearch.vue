@@ -162,7 +162,7 @@
         }
         this.next_offset = 0;
         this.agent_pairs = null;
-        self.complexes_covered = null;
+        this.complexes_covered = null;
         this.pushHistory();
         return await this.search()
       },
