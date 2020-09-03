@@ -187,6 +187,8 @@
         let cumulative_queries = {};
         for (let idx in this.constraints) {
           window.console.log(`Processing constraint ${idx}`);
+
+          // Add the param to the query JSON
           let param = this.constraints[idx];
           let constraint = param.constraint;
           if (param.class === 'HasAgent')
@@ -207,6 +209,21 @@
                 query_jsons.push(param);
               }
             }
+          }
+        }
+
+        // Build up the context queries.
+        this.context_queries = [];
+        for (let cn in cumulative_queries) {
+          let constraint = cumulative_queries[cn].constraint;
+          if (cn === 'FromPapers') {
+            let paper_strings = [];
+            for (let [id_type, paper_id] in constraint.paper_list){
+              paper_strings.push(`${paper_id}@${id_type}`)
+            }
+            this.context_queries.push(`paper_ids=${paper_strings.join(',')}`);
+          } else if (cn === 'FromMeshIds') {
+            this.context_queries.push(`mesh_ids=${constraint.mesh_ids.join(',')}`)
           }
         }
 
@@ -235,7 +252,7 @@
         window.console.log(`Context queries: ${this.context_queries}`);
 
         // Make the query
-        let url = this.$agent_url + '?' + [...query_strs, ...this.context_queries].join('&');
+        let url = this.$agent_url + '?' + query_strs.join('&');
         window.console.log(url);
         const resp = await fetch(url, {
           method: 'POST',
