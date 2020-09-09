@@ -8,6 +8,11 @@
         {{ type_name }}
       </option>
     </select>
+    <span class="form-check">
+      <input type="checkbox" class="form-check-input" id="inc_subtypes"
+             v-model="include_subclasses">
+      <label class="form-check-label" for="inc_subtypes">Include subtypes</label>
+    </span>
   </span>
 </template>
 
@@ -18,6 +23,7 @@
     data: function() {
       return {
         type_options: this.$stmt_types,
+        include_subclasses: null,
         selected_type: null,
       }
     },
@@ -25,7 +31,10 @@
       constraint: function() {
         if (!this.selected_type)
           return null;
-        return {stmt_types: [this.selected_type]}
+        return {
+          stmt_types: [this.selected_type],
+          include_subclasses: this.include_subclasses
+        }
       }
     },
     watch: {
