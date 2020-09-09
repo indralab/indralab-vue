@@ -218,7 +218,7 @@
           let constraint = cumulative_queries[cn].constraint;
           if (cn === 'FromPapers') {
             let paper_strings = [];
-            for (let [id_type, paper_id] in constraint.paper_list){
+            for (let [id_type, paper_id] of constraint.paper_list){
               paper_strings.push(`${paper_id}@${id_type}`)
             }
             this.context_queries.push(`paper_ids=${paper_strings.join(',')}`);
