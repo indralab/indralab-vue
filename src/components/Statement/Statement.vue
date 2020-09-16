@@ -62,7 +62,10 @@
       hash: String,
       sources: Object,
       total_evidence: Number,
-      context_queries: Array,
+      context_queries: {
+        type: Array,
+        default: null
+      },
       num_curations: {
         type: Number,
         default: null
@@ -111,9 +114,10 @@
           'format=json-js',
           'with_english=true',
           'with_cur_counts=true',
-          'filter_ev=true',
-          ...this.context_queries
+          'filter_ev=true'
         ];
+        if (this.context_queries != null)
+          params = [...params, ...this.context_queries]
 
         const resp = await fetch(this.evidence_url + this.hash
                 + '?' + params.join('&'));
