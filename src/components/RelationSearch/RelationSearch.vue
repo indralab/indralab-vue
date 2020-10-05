@@ -78,10 +78,6 @@
       <small>I found statements that {{ query_string }}</small>
       <hr>
       <h4 v-show='empty_relations & search_history'>Nothing found.</h4>
-      <div class="text-center sticky-header" v-show="!empty_relations">
-        db <source-display></source-display> rd
-        <hr id="src-disp-hr">
-      </div>
       <div id="result-list">
         <span v-for="agent_pair in list_shown" :key="agent_pair.id">
           <agent-pair v-bind="agent_pair" :context_queries="context_queries"></agent-pair>
