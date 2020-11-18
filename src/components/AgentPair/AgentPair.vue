@@ -1,8 +1,8 @@
 <template>
-  <span class="relation">
+  <span class="agent-pair">
     <div class="row header"
          :style="`cursor: ${(searching) ? 'progress': 'pointer'};`"
-         @click="toggleStmts">
+         @click="toggleRelations">
       <div class='col text-left'>
         <h5>
           <span v-html="english"></span>
@@ -19,32 +19,24 @@
     <div class="error-message" v-show="search_failed">
       <i style="color: red">Failed to find statements: {{search_failed}}</i>
     </div>
-    <div class="row stmt_list" v-show="show_stmts">
+    <div class="row stmt_list" v-show="show_relations">
       <div class="col">
         <div class="container right-bar">
-          <statement v-for="[hash, stmt] of list_shown"
-                     :key="hash"
-                     :english="stmt.english"
-                     :hash="hash"
-                     :loadable="true"
-                     :sources="stmt_source_counts[hash]"
-                     :num_curations="cur_counts[hash]"
-                     :evidence="stmt.evidence"
-                     :total_evidence="evidence_totals[hash]"
-                     :context_queries="context_queries"
-                     :init_expanded="Object.keys(stmts).length === 1"></statement>
-        </div>
-        <div class='text-center clickable'
-             :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
-             v-show='show_buttons'
-             @click='loadMore'>
-          Load {{ next_batch }} more...
-        </div>
-        <div class='text-center clickable'
-             :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
-             v-show='show_buttons'
-             @click='loadAll'>
-          Load all {{(base_list ? base_list.length : 0) - end_n }} remaining...
+          <span v-for="relation in list_shown" :key="relation.id">
+            <relation v-bind="relation" :context_queries="context_queries"></relation>
+          </span>
+          <div class='text-center clickable'
+               :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+               v-show='show_buttons'
+               @click='loadMore'>
+            Load {{ next_batch }} more...
+          </div>
+          <div class='text-center clickable'
+               :style="`cursor: ${(searching) ? 'progress' : 'pointer'}`"
+               v-show='show_buttons'
+               @click='loadAll'>
+            Load all {{ base_list ? base_list.length : 0 - end_n }} remaining...
+          </div>
         </div>
       </div>
     </div>
@@ -52,15 +44,14 @@
 </template>
 
 <script>
-  import piecemeal_mixin from "../piecemeal_mixin";
+  import piecemeal_mixin from '../piecemeal_mixin'
 
   export default {
-    name: "Relation",
+    name: "AgentPair",
     props: {
       english: String,
       source_counts: Object,
       agents: Object,
-      type: String,
       cur_count: {
         type: Number,
         default: 0
@@ -70,61 +61,52 @@
     },
     data: function() {
       return {
-        show_stmts: false,
-        stmts: null,
-        stmt_source_counts: null,
+        show_relations: false,
+        relations: null,
         searching: false,
-        cur_counts: null,
         evidence_totals: null,
         search_failed: null,
       }
     },
     methods: {
-      toggleStmts: function() {
-        if (this.stmts == null)
-          this.getStmts();
-        this.show_stmts = !this.show_stmts;
+      toggleRelations: function() {
+        if (this.relations == null)
+          this.getRelations();
+        this.show_relations = !this.show_relations;
       },
 
-      getStmts: async function() {
+      getRelations: async function() {
         if (this.searching)
           return false;
 
-        window.console.log("Getting statements.");
+        window.console.log("Getting relations.");
         this.searching = true;
 
         let query_data = {
           agent_json: this.agents,
           hashes: this.hashes,
-          stmt_type: this.type
         };
 
         let query_strs = [];
-        query_strs.push("ev_limit=10");
-        query_strs.push("format=json-js");
-        query_strs.push("with_english=true");
         query_strs.push("with_cur_counts=true");
-        query_strs.push("filter_ev=true");
 
-        let query_str = [...query_strs, ...this.context_queries].join('&');
-        window.console.log(this.$stmt_url);
+        let query_str = query_strs.join('&');
+        window.console.log(this.$relation_url);
         window.console.log(query_str);
         window.console.log(query_data);
         const resp = await fetch(
-          this.$stmt_url + '?' + query_str,
+          this.$relation_url + '?' + query_str,
           {
             method: 'POST',
             body: JSON.stringify(query_data),
             headers: {'Content-Type': 'application/json'}
-          });
+        });
         let success = true;
         if (resp.status === 200) {
           const resp_json = await resp.json();
           window.console.log(resp_json);
 
-          this.stmts = resp_json.statements;
-          this.stmt_source_counts = resp_json.source_counts;
-          this.cur_counts = resp_json.num_curations;
+          this.relations = resp_json.relations;
           this.evidence_totals = resp_json.evidence_totals;
           this.search_failed = null;
         } else {
@@ -137,9 +119,7 @@
     },
     computed: {
       base_list: function() {
-        if (!this.stmts)
-          return null;
-        return Object.entries(this.stmts);
+        return this.relations;
       }
     },
     mixins: [piecemeal_mixin]
