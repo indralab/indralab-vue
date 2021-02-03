@@ -179,8 +179,6 @@
             this.status = 'unknown failure';
             break;
         }
-        const data = await resp.json();
-        window.console.log('Got back: ' + JSON.stringify(data));
       },
 
       getCurations: async function() {
@@ -192,11 +190,13 @@
         switch (resp.status) {
           case 200:
             data = await resp.json();
-            window.console.log('Got back: ' + JSON.stringify(data));
             for (let entry of data)
               entry.date = new Date(entry.date);
             this.previous = data;
             this.error_loading_previous = null;
+            break;
+          case 401:
+            this.error_loading_previous = "You must first log in.";
             break;
           default:
             this.error_loading_previous = `(${resp.status}) ${resp.statusText}`;
