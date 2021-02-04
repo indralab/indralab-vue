@@ -30,7 +30,7 @@
                      :sources="stmt_source_counts[hash]"
                      :num_curations="cur_counts[hash]"
                      :evidence="stmt.evidence"
-                     :total_evidence="evidence_totals[hash]"
+                     :total_evidence="evidence_counts[hash]"
                      :context_queries="context_queries"
                      :init_expanded="Object.keys(stmts).length === 1"></statement>
         </div>
@@ -75,7 +75,7 @@
         stmt_source_counts: null,
         searching: false,
         cur_counts: null,
-        evidence_totals: null,
+        evidence_counts: null,
         search_failed: null,
       }
     },
@@ -125,7 +125,7 @@
           this.stmts = resp_json.statements;
           this.stmt_source_counts = resp_json.source_counts;
           this.cur_counts = resp_json.num_curations;
-          this.evidence_totals = resp_json.evidence_totals;
+          this.evidence_counts = resp_json.evidence_counts;
           this.search_failed = null;
         } else {
           this.search_failed = `(${resp.status}) ${resp.statusText}`

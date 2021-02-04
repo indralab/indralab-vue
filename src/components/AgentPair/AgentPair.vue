@@ -64,7 +64,7 @@
         show_relations: false,
         relations: null,
         searching: false,
-        evidence_totals: null,
+        evidence_counts: null,
         search_failed: null,
       }
     },
@@ -107,7 +107,7 @@
           window.console.log(resp_json);
 
           this.relations = resp_json.relations;
-          this.evidence_totals = resp_json.evidence_totals;
+          this.evidence_counts = resp_json.evidence_counts;
           this.search_failed = null;
         } else {
           this.search_failed = `(${resp.status}) ${resp.statusText}`
