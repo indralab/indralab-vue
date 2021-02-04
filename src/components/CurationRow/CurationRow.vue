@@ -33,8 +33,8 @@
             <i>{{ message }}</i>
           </span>
         </div>
-        <div v-if="error_loading_previous">
-          <i style="color: red">Sorry, we could not load previous curations: {{error_loading_previous}}</i>
+        <div v-if="no_auth_message">
+          <i style="color: yellow">Sorry, we could not load previous curations, {{no_auth_message}}</i>
         </div>
         <div v-if='(previous && previous.length) || error_loading_previous'
              class="curation-panel">
@@ -49,6 +49,9 @@
             </button>
           </h5>
           <hr>
+          <div v-if="error_loading_previous">
+            <i style="color: red">Sorry, we could not load previous curations: {{error_loading_previous}}</i>
+          </div>
           <div v-if="previous && previous.length">
             <div v-for='entry in previous'
                  :key="entry.date.toISOString()"
@@ -107,6 +110,7 @@
         previous: null,
         status: null,
         error_loading_previous: null,
+        no_auth_message: null,
       }
     },
     methods: {
@@ -196,9 +200,10 @@
               entry.date = new Date(entry.date);
             this.previous = data;
             this.error_loading_previous = null;
+            this.no_auth_message = null;
             break;
           case 401:
-            this.error_loading_previous = "You must first log in.";
+            this.no_auth_message = "You must first log in.";
             break;
           default:
             this.error_loading_previous = `(${resp.status}) ${resp.statusText}`;
