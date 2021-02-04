@@ -81,7 +81,8 @@
       value: String,
       open: Boolean,
       source_hash: String,
-      stmt_hash: String
+      ev_json: Object,
+      stmt_hash: String,
     },
     data: function() {
       return {
@@ -142,6 +143,7 @@
           tag: this.error_type,
           text: this.comment,
           ev_hash: this.source_hash,
+          ev_json: this.ev_json,
         };
         let url = this.$curation_url;
         if (this.$curation_url[this.$curation_url.length - 1] !== '/')
