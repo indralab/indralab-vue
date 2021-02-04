@@ -34,7 +34,7 @@
           </span>
         </div>
         <div v-if="no_auth_message">
-          <i style="color: yellow">Sorry, we could not load previous curations, {{no_auth_message}}</i>
+          <i>(Sorry, we could not load previous curations: {{no_auth_message}})</i>
         </div>
         <div v-if='(previous && previous.length) || error_loading_previous'
              class="curation-panel">

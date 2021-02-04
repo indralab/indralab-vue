@@ -24,7 +24,8 @@ npm run lint
 ```
 npm run deploy -- <deployment>
 ```
-where deployment is either "dev", "latest", or "stable".
+where deployment is either "dev", "latest", or "stable". Note that
+`deploy` does not run `build`, which must be run separately.
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
