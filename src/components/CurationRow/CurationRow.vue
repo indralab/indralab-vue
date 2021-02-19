@@ -33,10 +33,7 @@
             <i>{{ message }}</i>
           </span>
         </div>
-        <div v-if="error_loading_previous">
-          <i style="color: red">Sorry, we could not load previous curations: {{error_loading_previous}}</i>
-        </div>
-        <div v-if='(previous && previous.length) || error_loading_previous'
+        <div v-if='(previous && previous.length) || error_loading_previous || no_auth'
              class="curation-panel">
           <h5>
             Prior Curations
@@ -49,6 +46,12 @@
             </button>
           </h5>
           <hr>
+          <div v-if="no_auth">
+            <i>Please log in and to see previous curations.</i>
+          </div>
+          <div v-if="error_loading_previous">
+            <i style="color: red">Sorry, we could not load previous curations: {{error_loading_previous}}</i>
+          </div>
           <div v-if="previous && previous.length">
             <div v-for='entry in previous'
                  :key="entry.date.toISOString()"
@@ -81,7 +84,8 @@
       value: String,
       open: Boolean,
       source_hash: String,
-      stmt_hash: String
+      ev_json: Object,
+      stmt_hash: String,
     },
     data: function() {
       return {
@@ -106,6 +110,7 @@
         previous: null,
         status: null,
         error_loading_previous: null,
+        no_auth: false,
       }
     },
     methods: {
@@ -142,6 +147,7 @@
           tag: this.error_type,
           text: this.comment,
           ev_hash: this.source_hash,
+          ev_json: this.ev_json,
         };
         let url = this.$curation_url;
         if (this.$curation_url[this.$curation_url.length - 1] !== '/')
@@ -179,8 +185,6 @@
             this.status = 'unknown failure';
             break;
         }
-        const data = await resp.json();
-        window.console.log('Got back: ' + JSON.stringify(data));
       },
 
       getCurations: async function() {
@@ -192,11 +196,14 @@
         switch (resp.status) {
           case 200:
             data = await resp.json();
-            window.console.log('Got back: ' + JSON.stringify(data));
             for (let entry of data)
               entry.date = new Date(entry.date);
             this.previous = data;
             this.error_loading_previous = null;
+            this.no_auth = false;
+            break;
+          case 401:
+            this.no_auth = true;
             break;
           default:
             this.error_loading_previous = `(${resp.status}) ${resp.statusText}`;

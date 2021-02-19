@@ -24,7 +24,8 @@
     <div class='row'>
       <div class='col'>
         <curation-row :open='curation_shown' :stmt_hash='stmt_hash'
-                      :source_hash='source_hash' v-model="submission_status"/>
+                      :source_hash='source_hash' v-model="submission_status"
+                      :ev_json="original_json"/>
       </div>
     </div>
   </div>
@@ -48,7 +49,8 @@
         default: null
       },
       source_hash: String,
-      stmt_hash: String
+      stmt_hash: String,
+      original_json: Object,
     },
     data: function () {
       return {

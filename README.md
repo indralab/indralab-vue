@@ -20,5 +20,12 @@ npm run build
 npm run lint
 ```
 
+### Deploys build to remote host on s3.
+```
+npm run deploy -- <deployment>
+```
+where deployment is either "dev", "latest", or "stable". Note that
+`deploy` does not run `build`, which must be run separately.
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
